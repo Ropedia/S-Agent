@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>S-Agent: Spatial Tool-Use Elicits Reasoning for Spatial Intelligence</title>
+<meta name="description" content="S-Agent is the first spatial tool-use agentic paradigm for continuous multi-view image and video reasoning, formulating spatial reasoning as spatio-temporal evidence accumulation." />
+<meta property="og:title" content="S-Agent: Spatial Tool-Use Elicits Reasoning for Spatial Intelligence" />
+<meta property="og:description" content="A spatial tool-use agent that accumulates spatio-temporal evidence — improving zero-shot VLMs and distilling a compact S-Agent-8B." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23020502'/%3E%3Ccircle cx='32' cy='32' r='20' fill='none' stroke='%23ccffa0' stroke-width='5'/%3E%3Ccircle cx='32' cy='32' r='7' fill='%23ccffa0'/%3E%3Cpath d='M14 42c15 11 35 5 36-10C51 16 25 14 18 28' fill='none' stroke='%238df3df' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E" />
+<link rel="stylesheet" href="assets/vendor/fontawesome/css/all.css" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- ============================ HERO ============================ -->
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-top">
+      <div class="hero-brand">
+        <a href="https://ropedia.com" target="_blank" rel="noopener"><img class="instlogo" src="assets/ropedia_green.svg" alt="Ropedia" /></a>
+      </div>
+    </div>
+
+    <div class="hero-grid">
+      <div class="hero-left">
+        <h1 class="hero-title">
+          <span class="nm"><svg class="title-eye anim" viewBox="56 50 210 232" role="img" aria-label="S-Agent logo">
+            <defs>
+              <linearGradient id="logoRail" x1="86" y1="76" x2="244" y2="246" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#CCFFA0"/><stop offset="0.5" stop-color="#6CBF43"/><stop offset="1" stop-color="#4F8F35"/>
+              </linearGradient>
+              <radialGradient id="logoBeacon" cx="50%" cy="50%" r="58%">
+                <stop stop-color="#F4FFF0"/><stop offset="0.46" stop-color="#8DF3DF"/><stop offset="1" stop-color="#6CBF43"/>
+              </radialGradient>
+            </defs>
+            <ellipse class="field" cx="166" cy="164" rx="94" ry="114"/>
+            <path class="orbit o1" d="M84 118C119 78 185 72 234 107"/>
+            <path class="orbit o2" d="M75 202C118 238 190 241 247 206"/>
+            <path class="mesh" d="M101 107L224 78L240 214L90 242L161 157L101 107M161 157L224 78M161 157L240 214"/>
+            <path class="axis" d="M91 176H247M166 72V258"/>
+            <path class="back" d="M224 78C169 46 91 63 85 113C78 173 239 151 241 214C243 266 157 274 90 242"/>
+            <path class="rail" d="M224 78C169 46 91 63 85 113C78 173 239 151 241 214C243 266 157 274 90 242" stroke="url(#logoRail)"/>
+            <path class="shine" d="M224 78C169 46 91 63 85 113C78 173 239 151 241 214C243 266 157 274 90 242"/>
+            <path class="depth" d="M224 78l13 16M101 107l13 16M161 157l13 16M240 214l13 16M90 242l13 16"/>
+            <circle class="spark" r="3.6"><animateMotion dur="5.4s" repeatCount="indefinite" path="M224 78C169 46 91 63 85 113C78 173 239 151 241 214C243 266 157 274 90 242"/></circle>
+            <circle class="spark" r="2.6" opacity="0.7"><animateMotion dur="5.4s" begin="1.9s" repeatCount="indefinite" path="M224 78C169 46 91 63 85 113C78 173 239 151 241 214C243 266 157 274 90 242"/></circle>
+            <g class="beacon" transform="translate(161 157)">
+              <circle class="beacon-ring" r="24"/>
+              <circle class="beacon-core" r="8" fill="url(#logoBeacon)"/>
+            </g>
+            <g class="node n1" transform="translate(224 78)"><circle class="ring" r="14"/><circle class="dot" r="13"/></g>
+            <g class="node n2" transform="translate(101 107)"><circle class="ring" r="14"/><circle class="dot" r="13"/></g>
+            <g class="node n3" transform="translate(161 157)"><circle class="ring" r="14"/><circle class="dot" r="13"/></g>
+            <g class="node n4" transform="translate(240 214)"><circle class="ring" r="14"/><circle class="dot" r="13"/></g>
+            <g class="node n5" transform="translate(90 242)"><circle class="ring" r="14"/><circle class="dot" r="13"/></g>
+          </svg><span class="tail">-Agent</span></span>
+          <span class="rest">Spatial tool-use elicits reasoning for spatial intelligence.</span>
+        </h1>
+
+        <div class="authors" style="margin-top:1.8rem;">
+          Yalun Dai<sup>1*</sup>,
+          Hao Li<sup>1,4*&#9670;</sup>,
+          Shulin Tian<sup>1</sup>,
+          Runmao Yao<sup>1</sup>,
+          Yuhao Dong<sup>1</sup>,
+          Fangzhou Hong<sup>1&#9670;</sup>,
+          Zhaoxi Chen<sup>1&#9670;</sup>,
+          Fangfu Liu<sup>2</sup>,
+          Baoliang Tian<sup>3</sup>,
+          Tao Wang<sup>3&dagger;</sup>,
+          Dingwen Zhang<sup>4</sup>,
+          Kim-Hui Yap<sup>1&dagger;</sup>,
+          Ziwei Liu<sup>1&#9670;</sup>
+        </div>
+        <p class="affil-note">
+          <sup>1</sup>Nanyang Technological University &nbsp; <sup>2</sup>Tsinghua University &nbsp; <sup>3</sup>ByteDance &nbsp; <sup>4</sup>NWPU &nbsp; <sup>&#9670;</sup>Ropedia<br>
+          <sup>*</sup>Equal contribution. &nbsp; <sup>&dagger;</sup>Corresponding author.
+        </p>
+
+        <div class="links">
+          <a class="btn" href="assets/S-Agent-paper.pdf" target="_blank"><span class="i"><i class="fas fa-file-pdf"></i></span><span>Paper</span></a>
+          <a class="btn ghost" href="#" data-placeholder="arxiv"><span class="i"><i class="fas fa-quote-right"></i></span><span>arXiv</span><span class="soon">soon</span></a>
+          <a class="btn ghost" href="#" data-placeholder="code"><span class="i"><i class="fab fa-github"></i></span><span>Code</span><span class="soon">soon</span></a>
+          <a class="btn ghost" href="#bibtex"><span class="i"><i class="fas fa-quote-left"></i></span><span>BibTeX</span></a>
+        </div>
+      </div>
+
+      <div class="hero-side">
+        <div class="hcar" id="heroCar">
+          <div class="hcar-cap"><span class="hcar-cap-icon"><i class="fas fa-route" aria-hidden="true"></i></span><span>Agent Trajectory Sample</span></div>
+          <div class="hcar-viewport">
+            <div class="hcar-track">
+              <div class="hcard" data-thumb="assets/case6111/contact.jpg" data-step-label="Step 00 · Question">
+                <img class="hc-img" loading="lazy" src="assets/case6111/contact.jpg" alt="64 sampled keyframes" />
+                <div class="hc-body"><span class="hc-tag">Step 00 · Question</span><div class="hc-q">Standing by the headphones, facing away from the entrance door — which way is the camera?</div><div class="hc-a">Input: 64 video frames → question + contact sheet</div></div>
+              </div>
+              <div class="hcar-arrow" aria-hidden="true"><i class="fas fa-long-arrow-alt-right"></i></div>
+              <div class="hcard" data-thumb="assets/case6111/headphones.jpg" data-step-label="Step 01 · Grounding">
+                <img class="hc-img" loading="lazy" src="assets/case6111/headphones.jpg" alt="Headphones grounded with a bounding box" />
+                <div class="hc-body"><span class="hc-tag">Step 01 · Grounding</span><div class="hc-q">Lock the three spatial entities with object grounding.</div><div class="hc-a">headphones + door + camera · <b>3 / 3</b> located <span class="ok">✓</span></div></div>
+              </div>
+              <div class="hcar-arrow" aria-hidden="true"><i class="fas fa-long-arrow-alt-right"></i></div>
+              <div class="hcard" data-thumb="assets/case6111/cloudPoster.png" data-step-label="Step 02 · Metric3D">
+                <img class="hc-img" loading="lazy" src="assets/case6111/cloudPoster.png" alt="Dense PLY point cloud with anchors and camera poses" />
+                <div class="hc-body"><span class="hc-tag">Step 02 · Metric3D</span><div class="hc-q">Lift the grounded entities into a dense 3D reconstruction.</div><div class="hc-a"><b>3 anchors</b> · headphones, door, camera centers</div></div>
+              </div>
+              <div class="hcar-arrow" aria-hidden="true"><i class="fas fa-long-arrow-alt-right"></i></div>
+              <div class="hcard" data-thumb="assets/case6111/top.png" data-step-label="Step 03 · Egocentric frame" data-rail-diagram="ego">
+                <div class="hc-diagram"><svg viewBox="0 0 320 150" role="img" aria-label="Egocentric person frame">
+                  <line class="fd-axis" x1="44" y1="86" x2="276" y2="86"/>
+                  <line class="fd-axis" x1="160" y1="34" x2="160" y2="136"/>
+                  <line class="fd-front" x1="160" y1="86" x2="160" y2="48"/>
+                  <path class="fd-fronthead" d="M160 38 L152 54 L168 54 Z"/>
+                  <circle class="fd-ring" cx="160" cy="86" r="25"/>
+                  <path class="fd-turn" d="M138 70 L132 80 L144 82 Z"/>
+                  <circle class="fd-door" cx="160" cy="122" r="6"/>
+                  <circle class="fd-person" cx="160" cy="86" r="7"/>
+                  <text class="fd-t cy" x="160" y="30" text-anchor="middle">FACING</text>
+                  <text class="fd-t cy" x="160" y="72" text-anchor="middle">PERSON</text>
+                  <text class="fd-t gd" x="160" y="146" text-anchor="middle">DOOR · BACK</text>
+                  <text class="fd-t" x="22" y="90">LEFT</text>
+                  <text class="fd-t" x="298" y="90" text-anchor="end">RIGHT</text>
+                </svg></div>
+                <div class="hc-body"><span class="hc-tag">Step 03 · Egocentric frame</span><div class="hc-q">Rotate the top-down layout into the person's coordinate frame.</div><div class="hc-a">Stand at headphones, face away from the door</div></div>
+              </div>
+              <div class="hcar-arrow" aria-hidden="true"><i class="fas fa-long-arrow-alt-right"></i></div>
+              <div class="hcard" data-thumb="assets/case6111/front.png" data-step-label="Step 04 · Relative position" data-rail-diagram="relative">
+                <div class="hc-diagram"><svg viewBox="0 0 320 150" role="img" aria-label="Relative position back-right">
+                  <path class="fd-zone" d="M160 86 H290 V138 H160 Z"/>
+                  <line class="fd-axis" x1="44" y1="86" x2="276" y2="86"/>
+                  <line class="fd-axis" x1="160" y1="34" x2="160" y2="136"/>
+                  <line class="fd-front" x1="160" y1="86" x2="160" y2="48"/>
+                  <path class="fd-fronthead" d="M160 38 L152 54 L168 54 Z"/>
+                  <path class="fd-path" d="M160 86 L232 116"/>
+                  <circle class="fd-door" cx="160" cy="122" r="6"/>
+                  <circle class="fd-person" cx="160" cy="86" r="7"/>
+                  <circle class="fd-cam" cx="232" cy="116" r="6.5"/>
+                  <text class="fd-t cy" x="160" y="30" text-anchor="middle">FACING</text>
+                  <text class="fd-t gd" x="150" y="118" text-anchor="end">DOOR</text>
+                  <text class="fd-t rs" x="244" y="110">CAMERA</text>
+                  <text class="fd-t" x="22" y="90">LEFT</text>
+                  <text class="fd-t rs" x="298" y="134" text-anchor="end">BACK-RIGHT</text>
+                </svg></div>
+                <div class="hc-body"><span class="hc-tag">Step 04 · Relative position</span><div class="hc-q">The relative-position expert judges the camera's quadrant.</div><div class="hc-a">Camera falls at the person's <b>back-right</b></div></div>
+              </div>
+              <div class="hcar-arrow" aria-hidden="true"><i class="fas fa-long-arrow-alt-right"></i></div>
+              <div class="hcard hcard--final" data-thumb="assets/case6111/still.jpg" data-step-label="Step 05 · Final answer">
+                <div class="hc-final"><span class="hc-final-d">D</span><span class="hc-final-dir">back-right</span></div>
+                <div class="hc-body"><span class="hc-tag">Step 05 · Final answer</span><div class="hc-q">Camera is at the person's back-right.</div><div class="hc-a"><span class="ok">✓</span> correct · GT <b>D</b> · 3 turns · 6 tool calls</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="hcar-rail" aria-label="Trajectory step thumbnails"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============================ 01 · THE PROBLEM ============================ -->
+<section class="section bg">
+  <div class="wrap">
+    <div class="kicker"><span class="kn">01</span><span>The problem</span></div>
+    <div class="sec-head split">
+      <h2 class="sec-title">Why the action interface <em>matters</em>.</h2>
+      <p class="sec-lede">The real 3D world is hidden, evolving, and continuously projected into streams of 2D observations. Reasoning from isolated views cannot maintain persistent state across viewpoints and time.</p>
+    </div>
+
+    <div class="figure lit">
+      <img src="assets/teaser.png" alt="Overview of S-Agent: a VLM semantic planner orchestrates a hierarchy of spatial tools and a dual-memory system over continuous multi-view and video input." />
+    </div>
+    <p class="figcap"><strong>Overview of S-Agent.</strong> A VLM semantic planner drives a hierarchy of spatial tools to ground, lift, and aggregate geometric cues, alongside a dual-memory system that maintains the evolving scene and reasoning history.</p>
+
+    <div class="iface-grid">
+      <div class="iface">
+        <span class="tag">(a) Single-pass VLM</span>
+        <h3>Answer from one impression</h3>
+        <p>One forward pass cannot re-detect when grounding fails, recover metric scale that was never observed, or attend to a frame that was not pre-selected. Reasoning collapses to the apparent 2D layout.</p>
+      </div>
+      <div class="iface">
+        <span class="tag">(b) Static tool-use agents</span>
+        <h3>Isolated, stateless calls</h3>
+        <p>Prior spatial agents (VADAR, SpaceTools, GCA) augment VLMs with programs and geometry, but target single images and treat each tool call as an isolated action — no persistent scene state across views and time.</p>
+      </div>
+      <div class="iface ours">
+        <span class="tag">(c) S-Agent</span>
+        <h3>Accumulate, persist, reason</h3>
+        <p>Each evidence request is conditioned on the question <em>and</em> the evolving memory. Perception and geometry are invoked on demand, and their outputs remain reusable across later reasoning steps.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ 03 · FRAMEWORK ============================ -->
+<section class="section">
+  <div class="wrap">
+    <div class="kicker"><span class="kn">02</span><span>The framework</span></div>
+    <div class="sec-head split">
+      <h2 class="sec-title">A planner, an evidence hierarchy, and a dual memory.</h2>
+      <p class="sec-lede">At each step, a tool-calling planner maps the question, observations, and memory to an evidence request; a tool or expert executes it and updates both memories. The agent terminates once evidence is sufficient.</p>
+    </div>
+
+    <div class="figure lit">
+      <img src="assets/framework.png" alt="The S-Agent pipeline: VLM planner, three-level spatial tool hierarchy, and scene/agent memory." />
+    </div>
+    <p class="figcap"><strong>The S-Agent pipeline.</strong> A VLM acts as semantic planner, spatial tools and experts as scene-specific evidence providers, and memory as the carrier of persistent 3D state across views, frames, and reasoning steps.</p>
+
+    <div class="prim-grid">
+      <div class="prim">
+        <span class="pn">Level 1</span>
+        <h3>2D Visual Evidence Acquisition</h3>
+        <p>Pulls useful clues from many overlapping, incomplete views: picking the frames that matter, finding the objects the question asks about, and locating candidates with open-vocabulary detection.</p>
+        <div class="toolset"><code>vlm_ground</code> <code>detect (GDINO)</code> <code>depth</code> <code>keyframe</code></div>
+      </div>
+      <div class="prim">
+        <span class="pn">Level 2</span>
+        <h3>2D-to-3D Geometric Lifting</h3>
+        <p>Turns flat image clues into 3D: depth, real-world coordinates, camera poses, and bird's-eye / new-view evidence — so scattered observations all live in one shared space.</p>
+        <div class="toolset"><code>metric_3d (DA3)</code> <code>camera pose</code> <code>BEV</code></div>
+      </div>
+      <div class="prim">
+        <span class="pn">Level 3</span>
+        <h3>Spatial Knowledge Aggregation</h3>
+        <p>Expert tools turn the clues into clear answers — how many, which direction, which way things face, and how big or far — handed back to the planner ready to use.</p>
+        <div class="toolset"><code>measure</code> <code>count</code> <code>relpos</code> <code>vis_orient</code> <code>obj_view</code></div>
+      </div>
+    </div>
+
+    <div class="mem-grid">
+      <div class="mem">
+        <h3>Scene Memory</h3>
+        <p>Builds a growing memory organized around objects — tying repeated sightings to the same object and collecting its visual and 3D evidence. It remembers only what the question needs, not a full 3D scan of the scene.</p>
+      </div>
+      <div class="mem">
+        <h3>Agent Memory</h3>
+        <p>Keeps a record of the reasoning — thoughts, tool calls, results, failures, and partial conclusions — so the planner can see what's missing, recheck what's unsure, and avoid repeating or contradicting itself.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ 04 · RESULTS ============================ -->
+<section class="section bg">
+  <div class="wrap">
+    <div class="kicker"><span class="kn">03</span><span>Results</span></div>
+    <div class="sec-head split">
+      <h2 class="sec-title">Best overall <em>zero-shot</em> spatial reasoning.</h2>
+      <p class="sec-lede">Without any spatial fine-tuning, S-Agent tops MMSI-Bench and ViewSpatial-Bench, with the largest gains on motion and perspective reasoning.</p>
+    </div>
+
+    <ul class="checks results-checks">
+      <li><span class="ck">✓</span><span>Best overall on <b>MMSI-Bench (46.4%)</b>, surpassing Gemini 3 Pro &amp; GPT-5.4</span></li>
+      <li><span class="ck">✓</span><span>Up to <b>+17.4 pp</b> over the base VLM; <b>+31.1</b> on camera-motion</span></li>
+      <li><span class="ck">✓</span><span><b>S-Agent-8B</b> distilled to Qwen3-VL-8B reaches GPT-5.4 parity</span></li>
+    </ul>
+
+    <!-- Main table: MMSI-Bench -->
+    <h3 class="tbl-title"><span class="i"><i class="fas fa-table"></i></span>MMSI-Bench — zero-shot, by reasoning dimension</h3>
+    <p class="tbl-note">Per-dimension accuracy following the MMSI-Bench taxonomy. C/O/R = camera / object / region. Δ on the S-Agent row is the absolute gain over the InternVL3.5-8B base VLM.</p>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr><th class="l">Model</th><th>C-C</th><th>O-O</th><th>R-R</th><th>C-O</th><th>O-R</th><th>C-R</th><th>Meas.</th><th>Appr.</th><th>Cam.</th><th>Obj.</th><th>MSR</th><th>Avg.</th></tr>
+        </thead>
+        <tbody>
+          <tr class="grp"><td class="l" colspan="12">Proprietary models</td></tr>
+          <tr><td class="l">Gemini 3 Pro</td><td class="num">47.3</td><td class="num">48.9</td><td class="num">42.0</td><td class="num">43.0</td><td class="num">37.6</td><td class="num">60.2</td><td class="num">64.1</td><td class="num">39.4</td><td class="num">41.9</td><td class="num">47.4</td><td class="num">37.9</td><td class="num">45.2</td></tr>
+          <tr><td class="l">GPT-5.4</td><td class="num">41.9</td><td class="num">33.0</td><td class="num">35.8</td><td class="num">49.8</td><td class="num">42.4</td><td class="num">68.7</td><td class="num">54.7</td><td class="num">37.4</td><td class="num">28.3</td><td class="num">40.8</td><td class="num">36.4</td><td class="num">41.9</td></tr>
+          <tr><td class="l">Grok 4</td><td class="num">36.6</td><td class="num">35.1</td><td class="num">39.5</td><td class="num">34.9</td><td class="num">45.9</td><td class="num">50.6</td><td class="num">21.9</td><td class="num">22.7</td><td class="num">40.5</td><td class="num">43.4</td><td class="num">38.4</td><td class="num">37.8</td></tr>
+          <tr class="grp"><td class="l" colspan="12">Open-weight general models</td></tr>
+          <tr><td class="l">InternVL3.5-8B <small style="color:var(--muted)">(base)</small></td><td class="num">29.0</td><td class="num">26.6</td><td class="num">29.6</td><td class="num">24.4</td><td class="num">31.8</td><td class="num">25.3</td><td class="num">29.7</td><td class="num">25.8</td><td class="num">14.9</td><td class="num">34.2</td><td class="num">36.4</td><td class="num">29.0</td></tr>
+          <tr><td class="l">Qwen3-VL-8B-Instruct</td><td class="num">28.0</td><td class="num">37.2</td><td class="num">32.1</td><td class="num">31.4</td><td class="num">35.3</td><td class="num">38.5</td><td class="num">37.5</td><td class="num">15.2</td><td class="num">27.0</td><td class="num">28.9</td><td class="num">29.8</td><td class="num">31.1</td></tr>
+          <tr><td class="l">Qwen3.5-9B</td><td class="num">34.4</td><td class="num">36.2</td><td class="num">34.6</td><td class="num">39.5</td><td class="num">38.8</td><td class="num">54.2</td><td class="num">56.3</td><td class="num">28.8</td><td class="num">36.5</td><td class="num">26.3</td><td class="num">28.8</td><td class="num">36.5</td></tr>
+          <tr class="grp"><td class="l" colspan="12">Open-weight spatial models</td></tr>
+          <tr><td class="l">SN-SI-1.1-Qwen3VL-8B</td><td class="num">44.1</td><td class="num">38.3</td><td class="num">33.3</td><td class="num">65.1</td><td class="num">38.8</td><td class="num">59.0</td><td class="num">48.4</td><td class="num">24.2</td><td class="num">29.7</td><td class="num">34.2</td><td class="num">22.2</td><td class="num">38.1</td></tr>
+          <tr><td class="l">VST-7B-SFT</td><td class="num">39.8</td><td class="num">36.2</td><td class="num">35.8</td><td class="num">37.2</td><td class="num">29.4</td><td class="num">33.7</td><td class="num">29.7</td><td class="num">47.0</td><td class="num">36.5</td><td class="num">35.5</td><td class="num">18.2</td><td class="num">32.5</td></tr>
+          <tr class="ours">
+            <td class="l">S-Agent (Ours)</td>
+            <td class="num">46.2</td><td class="num">43.6</td><td class="num">37.0</td><td class="num">43.0</td><td class="num">43.5</td><td class="num">63.9</td><td class="num">57.8</td><td class="num">40.9</td><td class="num">46.0</td><td class="num">48.7</td><td class="num">44.4</td>
+            <td class="num">46.4&nbsp;<span class="pos">+17.4</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="tbl-foot">Accuracy in %. The largest gains concentrate in <strong>camera motion (+31.1)</strong>, <strong>multi-step reasoning (+8.0)</strong>, and the camera–region relation (+38.6), categories that benefit most from accumulated geometric evidence.</p>
+
+    <!-- Two side-by-side tables -->
+    <div class="two-tbl">
+      <div>
+        <h3 class="tbl-title"><span class="i"><i class="fas fa-compass"></i></span>ViewSpatial-Bench (zero-shot)</h3>
+        <p class="tbl-note">Camera- and person-perspective spatial reasoning. Δ over the base VLM.</p>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th class="l">Model</th><th>C-OVO</th><th>C-RD</th><th>P-OVO</th><th>P-RD</th><th>P-SSRD</th><th>Avg.</th></tr></thead>
+            <tbody>
+              <tr><td class="l">Gemini 3 Pro</td><td class="num">31.6</td><td class="num">61.9</td><td class="num">41.1</td><td class="num">74.4</td><td class="num">38.9</td><td class="num">50.4</td></tr>
+              <tr><td class="l">GPT-5.4</td><td class="num">27.9</td><td class="num">60.2</td><td class="num">41.0</td><td class="num">48.5</td><td class="num">40.1</td><td class="num">45.6</td></tr>
+              <tr><td class="l">Qwen3-VL-8B</td><td class="num">29.7</td><td class="num">54.2</td><td class="num">47.3</td><td class="num">40.3</td><td class="num">31.1</td><td class="num">42.2</td></tr>
+              <tr><td class="l">VST-7B-SFT</td><td class="num">29.6</td><td class="num">52.7</td><td class="num">51.9</td><td class="num">50.7</td><td class="num">64.5</td><td class="num">50.5</td></tr>
+              <tr class="ours"><td class="l">S-Agent (Ours)</td><td class="num">55.5</td><td class="num">62.5</td><td class="num">42.2</td><td class="num">81.1</td><td class="num">60.6</td><td class="num">60.0&nbsp;<span class="pos">+14.4</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="tbl-foot">Best on C-OVO (55.5) and P-RD (81.1); +20.5 over GPT-5.4 on P-SSRD.</p>
+      </div>
+      <div>
+        <h3 class="tbl-title"><span class="i"><i class="fas fa-compress-arrows-alt"></i></span>Trajectory distillation → S-Agent-8B</h3>
+        <p class="tbl-note">Fine-tuning Qwen3-VL-8B on 292K S-Agent trajectories (S-300K). Accuracy in %.</p>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th class="l">Model</th><th>MMSI</th><th>ViewSpatial</th></tr></thead>
+            <tbody>
+              <tr><td class="l">GPT-5.4 <small style="color:var(--muted)">(proprietary)</small></td><td class="num">41.9</td><td class="num">45.6</td></tr>
+              <tr class="base"><td class="l">Qwen3-VL-8B (base)</td><td class="num">31.1</td><td class="num">42.2</td></tr>
+              <tr class="ours"><td class="l">S-Agent-8B (Ours)</td><td class="num">41.6&nbsp;<span class="pos">+10.5</span></td><td class="num">46.8&nbsp;<span class="pos">+4.6</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="tbl-foot">A ~15-point lift over the base model on MMSI-Bench, reaching parity with advanced closed-source models.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ 06 · TRAJECTORIES ============================ -->
+<section class="section bg" id="samples">
+  <div class="wrap">
+    <div class="kicker"><span class="kn">04</span><span>Reasoning trajectories</span></div>
+    <div class="sec-head split">
+      <h2 class="sec-title">Browse real agent <em>sessions</em>.</h2>
+      <p class="sec-lede">Each module is a real S-Agent run — the question, the key visual evidence, the tools it called, and the answer it submitted. Open one to step through the full reasoning trace.</p>
+    </div>
+
+    <div class="sample-grid">
+      <a class="stile" href="trajectories/trajectory.html?clean=1&amp;case=3001">
+        <div class="smeta"><span class="pill vid">Distance</span><span class="sbench">ReVSI</span><span class="smodel">· #3001</span></div>
+        <img class="scover" loading="lazy" src="trajectories/assets/abs_distance/3001/evidence_selector_contact_sheet.jpg" alt="Keyframes selected for case 3001" />
+        <div class="slabel">Question</div>
+        <div class="sq">Measuring from the closest point of each object, what is the direct distance between the computer mouse and the smoke detector (in meters)?</div>
+        <div class="ssum">GT <strong>3.0 m</strong> · S-Agent <strong>3.09 m</strong> <span class="ok">✓</span> — T★ keyframe search → metric-depth 3D lifting → measurement expert.</div>
+        <div class="scta">Open reasoning trajectory →</div>
+      </a>
+
+      <a class="stile" href="trajectories/trajectory.html?clean=1&amp;case=2534">
+        <div class="smeta"><span class="pill vid">Distance</span><span class="sbench">ReVSI</span><span class="smodel">· #2534</span></div>
+        <img class="scover" loading="lazy" src="trajectories/assets/abs_distance/2534/evidence_selector_contact_sheet.jpg" alt="Keyframes selected for case 2534" />
+        <div class="slabel">Question</div>
+        <div class="sq">Measuring from the closest point of each object, what is the direct distance between the laptop and the desktop printer (in meters)?</div>
+        <div class="ssum">GT <strong>3.4 m</strong> · S-Agent <strong>3.33 m</strong> <span class="ok">✓</span> — T★ keyframe search → metric-depth 3D lifting → measurement expert.</div>
+        <div class="scta">Open reasoning trajectory →</div>
+      </a>
+
+      <a class="stile" href="trajectories/trajectory.html?clean=1&amp;case=467">
+        <div class="smeta"><span class="pill mv">Counting</span><span class="sbench">ReVSI</span><span class="smodel">· #467</span></div>
+        <img class="scover" loading="lazy" src="trajectories/assets/counting_single/467/evidence_selector_contact_sheet.jpg" alt="Keyframes selected for case 467" />
+        <div class="slabel">Question</div>
+        <div class="sq">How many monitor(s) are in the scene?</div>
+        <div class="ssum">GT <strong>3</strong> · S-Agent <strong>3</strong> <span class="ok">✓</span> — T★ keyframe search → open-vocab detection → counting expert (multi-frame NMS).</div>
+        <div class="scta">Open reasoning trajectory →</div>
+      </a>
+
+      <a class="stile" href="trajectories/trajectory.html?clean=1&amp;case=383">
+        <div class="smeta"><span class="pill mv">Counting</span><span class="sbench">ReVSI</span><span class="smodel">· #383</span></div>
+        <img class="scover" loading="lazy" src="trajectories/assets/counting_single/383/evidence_selector_contact_sheet.jpg" alt="Keyframes selected for case 383" />
+        <div class="slabel">Question</div>
+        <div class="sq">How many monitor(s) are in the scene?</div>
+        <div class="ssum">GT <strong>2</strong> · S-Agent <strong>2</strong> <span class="ok">✓</span> — T★ keyframe search → open-vocab detection → counting expert (multi-frame NMS).</div>
+        <div class="scta">Open reasoning trajectory →</div>
+      </a>
+
+      <a class="stile" href="trajectories/revsi_trajectory.html?clean=1&amp;case=6247">
+        <div class="smeta"><span class="pill si">Route</span><span class="sbench">ReVSI</span><span class="smodel">· #6247</span></div>
+        <img class="scover" loading="lazy" src="trajectories/runs/showcase_lossless_primary125_revsi64_gpt54_20260614_185708/cases/6247/evidence_selector_contact_sheet.jpg" alt="Keyframes selected for case 6247" />
+        <div class="slabel">Question</div>
+        <div class="sq">Beginning at the range hood and facing the dishwasher, which turns navigate to the floor lamp?</div>
+        <div class="ssum">GT <strong>A</strong> · S-Agent <strong>A</strong> <span class="ok">✓</span> — detection → grounding → Metric3D → spatial reconstruction.</div>
+        <div class="scta">Open reasoning trajectory →</div>
+      </a>
+
+      <a class="stile" href="trajectories/revsi_trajectory.html?clean=1&amp;case=6483">
+        <div class="smeta"><span class="pill si">Route</span><span class="sbench">ReVSI</span><span class="smodel">· #6483</span></div>
+        <img class="scover" loading="lazy" src="trajectories/runs/showcase_lossless_primary125_revsi64_gpt54_20260614_185708/cases/6483/evidence_selector_contact_sheet.jpg" alt="Keyframes selected for case 6483" />
+        <div class="slabel">Question</div>
+        <div class="sq">Beginning at the laptop and facing the window, which turns navigate to the closet?</div>
+        <div class="ssum">GT <strong>B</strong> · S-Agent <strong>B</strong> <span class="ok">✓</span> — detection → grounding → Metric3D → spatial reconstruction.</div>
+        <div class="scta">Open reasoning trajectory →</div>
+      </a>
+
+      <a class="stile" href="trajectories/revsi_trajectory.html?clean=1&amp;case=2200">
+        <div class="smeta"><span class="pill gs">Size</span><span class="sbench">ReVSI</span><span class="smodel">· #2200</span></div>
+        <img class="scover" loading="lazy" src="trajectories/runs/showcase_lossless_primary125_revsi64_gpt54_20260614_185708/cases/2200/evidence_selector_contact_sheet.jpg" alt="Keyframes selected for case 2200" />
+        <div class="slabel">Question</div>
+        <div class="sq">What is the longest dimension of the wet floor sign, measured in centimeters?</div>
+        <div class="ssum">GT <strong>61 cm</strong> · S-Agent <strong>62.6 cm</strong> <span class="ok">✓</span> — detection → grounding → Metric3D → measurement expert.</div>
+        <div class="scta">Open reasoning trajectory →</div>
+      </a>
+
+      <a class="stile" href="trajectories/mmsi_trajectory.html?clean=1&amp;case=283">
+        <div class="smeta"><span class="pill gs">Measurement</span><span class="sbench">MMSI</span><span class="smodel">· #283</span></div>
+        <img class="scover" loading="lazy" src="trajectories/runs/showcase_lossless_primary85_mmsi_gpt54_20260614_night_primary125_to_mmsi/decoded_images/283_0.jpg" alt="Input image for case 283" />
+        <div class="slabel">Question</div>
+        <div class="sq">Assuming the width of this cabinet is 10 cm, what is the length of this cabinet?</div>
+        <div class="ssum">GT <strong>D</strong> · S-Agent <strong>D</strong> <span class="ok">✓</span> — detection → Metric3D geometry → measurement expert.</div>
+        <div class="scta">Open reasoning trajectory →</div>
+      </a>
+
+      <a class="stile" href="trajectories/mmsi_trajectory.html?clean=1&amp;case=387">
+        <div class="smeta"><span class="pill gs">Measurement</span><span class="sbench">MMSI</span><span class="smodel">· #387</span></div>
+        <img class="scover" loading="lazy" src="trajectories/runs/showcase_lossless_primary85_mmsi_gpt54_20260614_night_primary125_to_mmsi/decoded_images/387_0.jpg" alt="Input image for case 387" />
+        <div class="slabel">Question</div>
+        <div class="sq">Compared to the plate under the wooden table, which has a larger radius: the ceramic pot or the plate?</div>
+        <div class="ssum">GT <strong>A</strong> · S-Agent <strong>A</strong> <span class="ok">✓</span> — object detection → 3D metric probes → size comparison.</div>
+        <div class="scta">Open reasoning trajectory →</div>
+      </a>
+
+      <a class="stile" href="trajectories/mmsi_trajectory.html?clean=1&amp;case=359">
+        <div class="smeta"><span class="pill si">Multi-step</span><span class="sbench">MMSI</span><span class="smodel">· #359</span></div>
+        <img class="scover" loading="lazy" src="trajectories/runs/showcase_lossless_primary85_mmsi_gpt54_20260614_night_primary125_to_mmsi/decoded_images/359_0.jpg" alt="Input image for case 359" />
+        <div class="slabel">Question</div>
+        <div class="sq">With the direction of going up the stairs facing north, which spatial statement is correct?</div>
+        <div class="ssum">GT <strong>D</strong> · S-Agent <strong>D</strong> <span class="ok">✓</span> — detection → grounding → Metric3D → relative-position expert.</div>
+        <div class="scta">Open reasoning trajectory →</div>
+      </a>
+
+      <a class="stile" href="trajectories/mmsi_trajectory.html?clean=1&amp;case=861">
+        <div class="smeta"><span class="pill si">Multi-step</span><span class="sbench">MMSI</span><span class="smodel">· #861</span></div>
+        <img class="scover" loading="lazy" src="trajectories/runs/showcase_lossless_primary85_mmsi_gpt54_20260614_night_primary125_to_mmsi/decoded_images/861_0.jpg" alt="Input image for case 861" />
+        <div class="slabel">Question</div>
+        <div class="sq">Given several room facts, which statement about the scene is incorrect?</div>
+        <div class="ssum">GT <strong>B</strong> · S-Agent <strong>B</strong> <span class="ok">✓</span> — count, detection, grounding, metric and relative-position checks.</div>
+        <div class="scta">Open reasoning trajectory →</div>
+      </a>
+
+      <a class="stile" href="trajectories/mmsi_trajectory.html?clean=1&amp;case=893">
+        <div class="smeta"><span class="pill si">Multi-step</span><span class="sbench">MMSI</span><span class="smodel">· #893</span></div>
+        <img class="scover" loading="lazy" src="trajectories/runs/showcase_lossless_primary85_mmsi_gpt54_20260614_night_primary125_to_mmsi/decoded_images/893_0.jpg" alt="Input image for case 893" />
+        <div class="slabel">Question</div>
+        <div class="sq">If the window faces north, where is the cardboard box?</div>
+        <div class="ssum">GT <strong>A</strong> · S-Agent <strong>A</strong> <span class="ok">✓</span> — grounding → Metric3D reconstruction → southeast-corner resolution.</div>
+        <div class="scta">Open reasoning trajectory →</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ BIBTEX ============================ -->
+<section class="section bg" id="bibtex">
+  <div class="wrap" style="max-width:880px;">
+    <div class="kicker"><span class="kn">↳</span><span>Cite this work</span></div>
+    <div class="sec-head"><h2 class="sec-title">BibTeX</h2></div>
+    <div class="bibtex">
+      <button class="copy-btn" onclick="copyBib()"><i class="far fa-copy"></i> Copy</button>
+<pre id="bib-content">@article{dai2026sagent,
+  title   = {S-Agent: Spatial Tool-Use Elicits Reasoning for Spatial Intelligence},
+  author  = {Dai, Yalun and Li, Hao and Tian, Shulin and Yao, Runmao and
+             Dong, Yuhao and Hong, Fangzhou and Chen, Zhaoxi and Liu, Fangfu and
+             Tian, Baoliang and Wang, Tao and Zhang, Dingwen and Yap, Kim-Hui and
+             Liu, Ziwei},
+  journal = {Technical Report},
+  year    = {2026}
+}</pre>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-brand">
+      <svg class="title-eye foot-eye anim" viewBox="56 50 210 232" role="img" aria-label="S-Agent logo">
+        <defs>
+          <linearGradient id="logoRailF" x1="86" y1="76" x2="244" y2="246" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#CCFFA0"/><stop offset="0.5" stop-color="#6CBF43"/><stop offset="1" stop-color="#4F8F35"/>
+          </linearGradient>
+          <radialGradient id="logoBeaconF" cx="50%" cy="50%" r="58%">
+            <stop stop-color="#F4FFF0"/><stop offset="0.46" stop-color="#8DF3DF"/><stop offset="1" stop-color="#6CBF43"/>
+          </radialGradient>
+        </defs>
+        <ellipse class="field" cx="166" cy="164" rx="94" ry="114"/>
+        <path class="mesh" d="M101 107L224 78L240 214L90 242L161 157L101 107M161 157L224 78M161 157L240 214"/>
+        <path class="axis" d="M91 176H247M166 72V258"/>
+        <path class="rail" d="M224 78C169 46 91 63 85 113C78 173 239 151 241 214C243 266 157 274 90 242" stroke="url(#logoRailF)"/>
+        <path class="shine" d="M224 78C169 46 91 63 85 113C78 173 239 151 241 214C243 266 157 274 90 242"/>
+        <g class="beacon" transform="translate(161 157)">
+          <circle class="beacon-ring" r="24"/>
+          <circle class="beacon-core" r="8" fill="url(#logoBeaconF)"/>
+        </g>
+        <circle class="dot" cx="224" cy="78" r="12"/><circle class="dot" cx="101" cy="107" r="12"/><circle class="dot" cx="161" cy="157" r="12"/><circle class="dot" cx="240" cy="214" r="12"/><circle class="dot" cx="90" cy="242" r="12"/>
+      </svg>
+      <a class="foot-rope" href="https://ropedia.com" target="_blank" rel="noopener"><img class="instlogo" src="assets/ropedia_green.svg" alt="Ropedia" /></a>
+      <span><b>S-Agent</b> · Technical Report 2026 · see the <a href="assets/S-Agent-paper.pdf" target="_blank">PDF</a> for full details.</span>
+    </div>
+    <span>NTU · THU · ByteDance · NWPU · Ropedia</span>
+  </div>
+</footer>
+
+<div class="traj-modal" id="trajModal" aria-hidden="true">
+  <div class="traj-modal-backdrop" data-traj-close></div>
+  <div class="traj-window" role="dialog" aria-modal="true" aria-labelledby="trajModalTitle">
+    <div class="traj-window-bar">
+      <div>
+        <div class="traj-window-kicker" id="trajModalKicker">Agent Trajectory Sample</div>
+        <h2 id="trajModalTitle">S-Agent · Case 6111</h2>
+      </div>
+      <button class="traj-close" type="button" aria-label="Close trajectory sample" data-traj-close>
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+    </div>
+    <div class="traj-content" id="trajEmbed" aria-label="Embedded S-Agent Case 6111 trajectory"></div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

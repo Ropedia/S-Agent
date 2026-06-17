@@ -1,0 +1,900 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<title>S-Agent Trajectory · MMSI</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<script src="lib/three.min.js"></script>
+<script src="lib/PLYLoader.js"></script>
+<script src="lib/OrbitControls.js"></script>
+<script src="mmsi_cases.js"></script>
+<style>
+  :root{
+    --ink:#f5f7f0; --muted:rgba(245,247,240,.62); --line:rgba(204,255,160,.16);
+    --soft:rgba(255,255,255,.055); --soft2:rgba(204,255,160,.10);
+    --blue:#9fcbff; --green:#ccffa0; --amber:#ffc978; --gray:rgba(245,247,240,.5); --red:#ff9e9e;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --gap-1:4px; --gap-2:8px; --gap-3:13px;
+    --row-pad:11px; --rail:46px; --node:28px; --copy-w:250px;
+    --fig-h:148px; --fig-strip-h:76px; --plot-h:188px; --q-size:22px; --h2-size:16px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%;background:linear-gradient(180deg,#020502 0%,#050805 46%,#020502 100%);color:var(--ink);font:13px/1.4 "Inter Tight",-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,"PingFang SC","Microsoft YaHei",sans-serif}
+  body{padding:18px}
+  a{color:var(--green);text-decoration:none}
+  a:hover{text-decoration:underline}
+  img,video{display:block;width:100%;background:#020502}
+  button,select,input{font:inherit}
+  button{cursor:pointer}
+  .sheet{max-width:1180px;margin:0 auto;border:1px solid var(--line);background:rgba(5,10,6,.92);border-radius:8px;overflow:hidden;box-shadow:0 22px 70px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.035)}
+  .sheet.compact{max-width:1000px;--copy-w:212px;--fig-h:128px;--fig-strip-h:62px;--plot-h:176px;--q-size:21px;--h2-size:15px;--row-pad:9px;--rail:42px;--node:26px;--gap-3:14px}
+
+  header{display:grid;grid-template-columns:minmax(0,1fr);gap:18px;align-items:start;padding:16px 18px 14px;border-bottom:1px solid var(--line);background:rgba(2,5,2,.72)}
+  .brand{font:10px/1.2 var(--mono);font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:rgba(245,247,240,.54)}
+  h1{margin:3px 0 0;font-size:var(--q-size);line-height:1.14;font-weight:850;letter-spacing:0;color:var(--ink)}
+  .head-sub{margin:6px 0 0;color:rgba(245,247,240,.62);font-size:12px;line-height:1.35;max-width:76ch}
+  .qcard{width:100%;border:1px solid var(--line);background:var(--soft);border-radius:7px;padding:7px 10px;font-size:13px;line-height:1.32;font-weight:650;color:rgba(245,247,240,.82)}
+  .qcard .qcard-tag{display:block;font:9.5px/1 var(--mono);font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:rgba(245,247,240,.54);margin-bottom:4px}
+  .verdict{display:inline-flex;align-items:baseline;gap:7px;margin-top:10px;border:1px solid rgba(204,255,160,.32);background:rgba(204,255,160,.10);border-radius:999px;padding:5px 14px;font-size:12.5px;font-weight:650;color:var(--green)}
+  .verdict b{font-size:16px;font-weight:900;font-variant-numeric:tabular-nums}
+  .verdict.bad{border-color:rgba(255,158,158,.34);background:rgba(255,158,158,.09);color:var(--red)}
+  .pipeline{display:flex;align-items:center;flex-wrap:wrap;gap:var(--gap-1);list-style:none;margin:0;padding:9px 18px;border-bottom:1px solid var(--line);background:rgba(0,0,0,.32)}
+  .pchip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:rgba(255,255,255,.045);border-radius:999px;padding:3px 11px 3px 4px;font-size:11.5px;font-weight:700;color:rgba(245,247,240,.82)}
+  .pchip .pno{display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:rgba(204,255,160,.10);font:10px/1 var(--mono);font-weight:850;color:var(--green)}
+  .pchip .pval{font-weight:850;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .pchip.warn{border-color:rgba(255,201,120,.30);background:rgba(255,201,120,.10);color:var(--amber)}
+  .pchip.good{border-color:rgba(204,255,160,.32);background:rgba(204,255,160,.10);color:var(--green)}
+  .pcon{color:rgba(245,247,240,.35);font-weight:900;padding:0 2px}
+
+  .trace{position:relative;display:grid;gap:10px;padding:13px 18px 16px;background:#000}
+  .stage{position:relative;display:grid;grid-template-columns:var(--rail) minmax(0,1fr);gap:var(--gap-2);padding:var(--row-pad) 14px var(--row-pad) 0;border:1px solid var(--line);border-radius:8px;background:rgba(5,10,6,.94);box-shadow:0 16px 46px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.028);overflow:hidden}
+  .stage::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:rgba(204,255,160,.28)}
+  .stage.input::before,.stage.metric::before,.stage.answer::before{background:var(--green)}
+  .stage.tools::before{background:var(--amber)}
+  .stage.ply::before{background:var(--blue)}
+  .rail{display:flex;align-items:flex-start;justify-content:center;padding-top:1px}
+  .node{width:var(--node);height:var(--node);border:1.5px solid rgba(204,255,160,.24);border-radius:50%;background:#020502;display:grid;place-items:center;color:var(--green);font:13px/1 var(--mono);font-weight:850;box-shadow:0 0 0 1px rgba(0,0,0,.18)}
+  .stage.tools .node{border-color:rgba(255,201,120,.3);background:rgba(255,201,120,.12);color:var(--amber)}
+  .stage.ply .node{border-color:rgba(159,203,255,.35);background:rgba(159,203,255,.10);color:var(--blue)}
+  .stage.answer .node{background:rgba(204,255,160,.14);border-color:var(--green)}
+  .stage-content{grid-column:2;min-width:0;display:grid;grid-template-columns:var(--copy-w) minmax(0,1fr);gap:var(--gap-3);align-items:start}
+  .copy{min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+  .visual{min-width:0}
+  .kicker{font:10px/1 var(--mono);font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:rgba(245,247,240,.54)}
+  h2{margin:0;font-size:var(--h2-size);line-height:1.2;font-weight:800;letter-spacing:0;color:var(--ink)}
+  .step-head{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:1px}
+  .tool,.pill{border:1px solid var(--line);background:var(--soft);color:rgba(245,247,240,.78);border-radius:999px;padding:2px 9px;font-size:11.5px;font-weight:650;line-height:1.3}
+  .tool{border-radius:5px;font:10.5px/1.25 var(--mono);font-weight:750}
+  .pill b{font-weight:850;font-variant-numeric:tabular-nums}
+  .pill.good,.tool.green{border-color:rgba(204,255,160,.32);background:rgba(204,255,160,.10);color:var(--green)}
+  .pill.warn,.tool.amber{border-color:rgba(255,201,120,.30);background:rgba(255,201,120,.10);color:var(--amber)}
+  .reason{border-left:2px solid rgba(204,255,160,.20);padding:1px 0 1px 10px;color:rgba(245,247,240,.68);font-size:12px;font-weight:450;line-height:1.34;margin:2px 0 0}
+
+  .gallery{display:grid;grid-template-columns:repeat(var(--cols,2),minmax(0,1fr));gap:var(--gap-2)}
+  .gallery.cols-1{--cols:1}.gallery.cols-2{--cols:2}.gallery.cols-3{--cols:3}.gallery.cols-4{--cols:4}
+  .gallery.strip{--cols:4;gap:var(--gap-1)}
+  figure{margin:0;border:1px solid var(--line);background:#0c0f14;overflow:hidden;border-radius:6px}
+  figure button{display:flex;align-items:center;justify-content:center;width:100%;height:var(--fig-h);padding:0;border:0;background:#0c0f14;cursor:zoom-in}
+  figure img{width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain;background:#0c0f14}
+  .gallery.strip figure button{height:var(--fig-strip-h)}
+  .gallery.plots figure button{height:var(--plot-h);background:#fff}
+  .gallery.plots figure img{background:#fff}
+  figcaption{padding:4px 8px;color:rgba(245,247,240,.68);font-size:10.5px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:#0c0f14;border-top:1px solid #1c222c}
+  .gallery.plots figcaption{color:#c5c9c4;background:#0c0f14}
+
+  .turn-list,.tool-list{display:grid;gap:8px}
+  .metric-bundles{display:grid;gap:8px}
+  .metric-bundle{display:grid;grid-template-columns:1fr;gap:8px;align-items:start;border:1px solid var(--line);background:rgba(255,255,255,.025);border-radius:7px;padding:9px}
+  .mini{border:1px solid var(--line);background:rgba(255,255,255,.035);border-radius:6px;padding:8px 9px;min-width:0}
+  .mini h3{margin:0 0 5px;font-size:12px;line-height:1.2;color:var(--ink)}
+  .mini p{margin:0;color:rgba(245,247,240,.66);font-size:11.5px;line-height:1.35}
+  .metric-bundle .mini p{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .mini code{font:10.5px/1.3 var(--mono);color:var(--green)}
+  .mini.warn code{color:var(--amber)}
+
+  .ply-row{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);gap:var(--gap-2);align-items:start;--ply-row-h:176px;min-width:0}
+  .metric-bundle .ply-row{grid-template-columns:minmax(0,1.18fr) minmax(0,.96fr);--ply-row-h:250px}
+  .ply-row .ply3d{height:var(--ply-row-h)}
+  .ply-plots{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:var(--gap-2);min-width:0;align-items:start}
+  .metric-bundle .ply-plots{grid-template-columns:repeat(auto-fit,minmax(128px,1fr))}
+  .ply-row figure{min-width:0;background:#0c0f14}
+  .ply-row figure button{height:calc((var(--ply-row-h) - 33px) / 2);min-height:84px;background:#0c0f14;overflow:hidden}
+  .ply-row figure img{width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain;background:#0c0f14}
+  .ply-row figcaption{color:#aeb6c2;background:#0c0f14;border-top:1px solid #1c222c;font-size:10px}
+  .ply-row .ply-badge{top:7px;left:7px;padding:3px 7px;font-size:8.5px}
+  .ply-row .ply-hint{display:none}
+  .ply-row .ply-legend{left:7px;right:7px;bottom:7px;gap:6px;padding:3px 7px;font-size:9px;max-height:70px;overflow:hidden}
+  .ply-row .lg{gap:4px}
+  .ply-row .lg i{width:7px;height:7px}
+  .ply3d{position:relative;width:100%;height:300px;border:1px solid #1d242e;border-radius:7px;overflow:hidden;background:radial-gradient(120% 90% at 50% 35%,#121823 0%,#080b10 70%,#05070a 100%);touch-action:none;cursor:grab}
+  .ply3d canvas{display:block;width:100%;height:100%}
+  .ply3d::after{content:"loading point cloud...";position:absolute;inset:0;display:grid;place-items:center;background:rgba(5,7,10,.62);font:10.5px/1 var(--mono);font-weight:750;color:#94a3b8;pointer-events:none;transition:opacity .18s ease}
+  .ply3d[data-loaded="1"]::after{opacity:0}
+  .ply3d.ply-fail::after{content:"point cloud could not load";color:#fca5a5;background:rgba(17,24,39,.74);opacity:1}
+  .ply-badge{position:absolute;top:9px;left:9px;display:inline-flex;align-items:center;gap:6px;background:rgba(8,12,18,.62);border:1px solid #2a3340;border-radius:999px;padding:3px 10px;font:9.5px/1 var(--mono);font-weight:750;letter-spacing:.03em;color:#cdd6e3;pointer-events:none}
+  .live-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;animation:livepulse 1.6s infinite}
+  @keyframes livepulse{0%{box-shadow:0 0 0 0 rgba(34,197,94,.55)}70%{box-shadow:0 0 0 6px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
+  .ply-hint{position:absolute;top:9px;right:10px;display:none;font:9.5px/1 var(--mono);color:#6b7585;pointer-events:none}
+  .ply-legend{position:absolute;bottom:9px;left:9px;right:9px;display:flex;gap:11px;flex-wrap:wrap;align-items:center;background:rgba(8,12,18,.62);border:1px solid #2a3340;border-radius:6px;padding:4px 10px;font-size:10.5px;font-weight:650;color:#cdd6e3;pointer-events:none}
+  .lg{display:inline-flex;align-items:center;gap:5px;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .lg i{width:9px;height:9px;border-radius:50%;display:inline-block;box-shadow:0 0 5px currentColor}
+  .links{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
+  .links a{border:1px solid var(--line);background:rgba(255,255,255,.045);border-radius:999px;padding:4px 9px;font:10.5px/1 var(--mono);font-weight:800}
+
+  .final-line{display:inline-flex;align-items:center;gap:10px;border:1px solid rgba(204,255,160,.26);background:rgba(255,255,255,.045);border-radius:8px;padding:9px 14px;font-size:14.5px;line-height:1.3;font-weight:650;color:var(--ink)}
+  .final-line b{font-weight:900;font-variant-numeric:tabular-nums;color:var(--green)}
+  .ok-tick{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--green);color:#020502;font-size:12px;font-weight:900}
+  details.raw{margin-top:var(--gap-2);border:1px dashed var(--line);background:var(--soft);font-size:11px;color:rgba(245,247,240,.70);border-radius:6px}
+  details.raw summary{cursor:pointer;padding:6px 9px;font-weight:750}
+  details.raw pre{margin:0;padding:8px;border-top:1px dashed var(--line);white-space:pre-wrap;overflow-wrap:anywhere;max-height:200px;overflow:auto;font:10.5px/1.45 var(--mono)}
+  .bottom-note{padding:8px 18px;border-top:1px solid var(--line);color:rgba(245,247,240,.50);font:10.5px/1.4 var(--mono);background:rgba(2,5,2,.72)}
+  #lightbox{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(8,12,18,.9);z-index:40;cursor:zoom-out;padding:22px}
+  #lightbox img{max-width:96vw;max-height:94vh;width:auto;height:auto;background:#fff;border-radius:6px}
+  #lightbox.show{display:flex}
+
+  @media (max-width:980px){
+    header{grid-template-columns:1fr}
+  }
+  @media (max-width:620px){
+    body{padding:0}
+    .sheet{border-radius:0;border-left:0;border-right:0}
+    header{padding:14px 12px 12px}
+    .trace{padding:10px 11px 13px}
+    .stage{grid-template-columns:36px minmax(0,1fr);padding-right:11px}
+    .stage-content{grid-template-columns:1fr;gap:10px}
+    .pipeline{padding:8px 11px}
+    .head-sub{font-size:11.5px}
+  }
+</style>
+</head>
+<body>
+<main class="sheet" id="app">
+  <header id="head"></header>
+  <ol class="pipeline" id="pipeline"></ol>
+  <section class="trace" id="trace"></section>
+  <div class="bottom-note" id="note"></div>
+</main>
+<div id="lightbox" aria-label="image preview"><img alt=""></div>
+
+<script>
+const DATA = window.SHOWCASE_DATA || { cases: [] };
+const CASES = DATA.cases || [];
+const cleanMode = new URLSearchParams(location.search).get("clean") === "1";
+const qsCase = new URLSearchParams(location.search).get("case");
+let currentId = qsCase || (CASES[0] && CASES[0].case_id);
+let activePlys = [];
+let inlinePlyScripts = {};
+
+const $ = (id) => document.getElementById(id);
+const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+const fileName = (p) => String(p || "").split("/").pop() || "";
+const unique = (arr) => [...new Set((arr || []).filter(Boolean))];
+const isImage = (p) => /\.(png|jpe?g|webp|gif)$/i.test(String(p || ""));
+const isServedImage = (p) => isImage(p) && !String(p || "").startsWith("/") && !/^[a-z]+:\/\//i.test(String(p || ""));
+const isGood = (c) => String(c.prediction ?? "") === String(c.ground_truth ?? "");
+const short = (s, n = 420) => { s = String(s || "").trim(); return s.length > n ? s.slice(0, n - 1) + "..." : s; };
+const pretty = (v) => esc(JSON.stringify(v ?? {}, null, 2));
+
+function currentCase(){
+  return CASES.find((c) => String(c.case_id) === String(currentId)) || null;
+}
+
+function localAssetPath(path, c = currentCase()){
+  const s = String(path || "").trim();
+  const remote = s.match(/\/([^/]+)\/((?:cases|decoded_images|tool_cache)\/[^"'\]\s]+)$/);
+  if (s.startsWith("/mnt/") && remote) return `runs/${remote[1]}/${remote[2]}`;
+  if (/^\d+_\d+\.(jpg|jpeg|png|webp|gif)$/i.test(s) && c?.run_name){
+    return `runs/${c.run_name}/decoded_images/${s}`;
+  }
+  return s;
+}
+
+function answerText(c){
+  const raw = c.final_answer || c.raw_output || c.prediction || "";
+  const m = String(raw).match(/<answer>([\s\S]*?)<\/answer>/i);
+  return (m ? m[1] : raw).trim();
+}
+
+function extractImages(value, out = []){
+  if (!value) return out;
+  if (typeof value === "string"){ if (isImage(value)) out.push(value); return out; }
+  if (Array.isArray(value)){ value.forEach((x) => extractImages(x, out)); return out; }
+  if (typeof value === "object") Object.values(value).forEach((x) => extractImages(x, out));
+  return out;
+}
+
+function inputImages(c){
+  const turnImgs = (c.turns || []).flatMap((t) => t.images || []);
+  const originals = turnImgs.filter((p) => /decoded_images\/[^/]+\.(jpg|png|webp)$/i.test(p));
+  return unique([c.contact_sheet, ...originals]).slice(0, Math.max(2, Math.min(8, c.frame_count || 4)));
+}
+
+function metricBundles(c){
+  return (c.full_tools || []).filter((t) => t.tool === "metric_depth3d_tool").map((t) => {
+    const audit = (t.result && t.result.audit_assets) || {};
+    return {
+      idx: t.idx,
+      summary: t.summary || (t.result && t.result.summary) || "",
+      depth: t.result && t.result.vis_path,
+      topdown: audit.topdown_path,
+      front: audit.front_path,
+      ply: audit.ply_path,
+      pointCount: audit.saved_point_count,
+      result: t.result
+    };
+  });
+}
+
+function projectionImages(c){
+  const bundled = metricBundles(c).flatMap((b) => [b.front, b.topdown, b.depth]);
+  const explicit = c.projection_images || [];
+  const inferred = (c.artifacts || []).filter((p) => isImage(p) && /(topdown|front_xy|depth)/i.test(fileName(p)));
+  return unique([...bundled, ...explicit, ...inferred]).slice(0, 18);
+}
+
+function projectionLabel(path){
+  const name = fileName(path);
+  if (/topdown/i.test(name)) return "top-down XZ";
+  if (/front_xy/i.test(name)) return "front XY";
+  if (/depth/i.test(name)) return "depth map";
+  return name;
+}
+
+function toolImages(c, predicate){
+  const tools = (c.full_tools || []).filter(predicate);
+  const fromResults = tools.flatMap((t) => extractImages(t.result));
+  const byName = (c.artifacts || []).filter((p) => isImage(p) && tools.some((t) => fileName(p).includes(t.tool)));
+  return unique([...fromResults, ...byName]).slice(0, 16);
+}
+
+function pointMarkers(c){
+  const colors = ["#f59e0b","#38bdf8","#7ee2a0","#f472b6","#a78bfa","#f87171","#fde047","#2dd4bf"];
+  const pts = [];
+  (c.full_tools || []).filter((t) => t.tool === "metric_depth3d_tool").forEach((t) => {
+    ((t.result && t.result.points) || []).forEach((p) => {
+      const xyz = p.xyz_world || p.world_xyz;
+      if (Array.isArray(xyz) && xyz.length === 3 && pts.length < 8){
+        pts.push({ label: p.label || "point", xyz, color: colors[pts.length % colors.length] });
+      }
+    });
+  });
+  return pts;
+}
+
+function setUrl(){
+  const p = new URLSearchParams(location.search);
+  p.set("case", currentId);
+  if (cleanMode) p.set("clean", "1");
+  history.replaceState(null, "", "?" + p.toString());
+}
+
+function gallery(paths, opts = {}){
+  const imgs = unique((paths || []).map((p) => localAssetPath(p))).filter(isServedImage).slice(0, opts.limit || 8);
+  if (!imgs.length) return `<div class="mini"><p>No image evidence in this group.</p></div>`;
+  const cols = opts.cols || (imgs.length >= 4 ? 4 : imgs.length >= 3 ? 3 : 2);
+  const klass = opts.plots ? " gallery plots" : "gallery";
+  return `<div class="${klass} cols-${cols}">` + imgs.map((path, i) => `
+    <figure>
+      <button type="button" data-lightbox="${esc(path)}"><img src="${esc(path)}" alt="${esc(opts.labels?.[i] || fileName(path))}" loading="lazy"></button>
+      <figcaption>${esc(opts.labels?.[i] || fileName(path))}</figcaption>
+    </figure>
+  `).join("") + `</div>`;
+}
+
+function imageFigure(path, label){
+  path = localAssetPath(path);
+  return `<figure>
+    <button type="button" data-lightbox="${esc(path)}"><img src="${esc(path)}" alt="${esc(label || fileName(path))}" loading="lazy"></button>
+    <figcaption title="${esc(label || fileName(path))}">${esc(label || fileName(path))}</figcaption>
+  </figure>`;
+}
+
+function rawBlock(label, value){
+  if (cleanMode || !value) return "";
+  return `<details class="raw"><summary>${esc(label)}</summary><pre>${typeof value === "string" ? esc(value) : pretty(value)}</pre></details>`;
+}
+
+function stage(cls, no, kicker, title, chips, reason, visual, raw, copyExtra = ""){
+  return `<article class="stage ${cls}">
+    <div class="rail"><div class="node">${esc(no)}</div></div>
+    <div class="stage-content">
+      <div class="copy">
+        <div class="kicker">${esc(kicker)}</div>
+        <h2>${esc(title)}</h2>
+        ${copyExtra}
+        ${chips.length ? `<div class="step-head">${chips.map((c) => `<span class="${esc(c[1] || "pill")}">${esc(c[0])}</span>`).join("")}</div>` : ""}
+        ${reason ? `<div class="reason">${esc(reason)}</div>` : ""}
+        ${rawBlock("raw trace", raw)}
+      </div>
+      <div class="visual">${visual}</div>
+    </div>
+  </article>`;
+}
+
+function renderHeader(c){
+  const good = isGood(c);
+  document.title = `S-Agent Trajectory · MMSI #${c.case_id}`;
+  $("head").innerHTML = `
+    <div class="head-main">
+      <div class="brand">S-Agent trajectory</div>
+      <h1>MMSI Case #${esc(c.case_id)}</h1>
+      <p class="head-sub">${esc(short(c.question, 180))}</p>
+      <div class="verdict ${good ? "" : "bad"}">S-Agent <b>${esc(c.prediction)}</b><span>·</span> GT <b>${esc(c.ground_truth)}</b><span>·</span><em>${good ? "correct" : "check"}</em></div>
+    </div>
+  `;
+}
+
+function renderPipeline(steps){
+  $("pipeline").innerHTML = steps.map((s, i) => `
+    <li class="pchip ${esc(s.tone || "")}"><span class="pno">${i + 1}</span>${esc(s.label)} <span class="pval">${esc(s.value || "")}</span></li>${i < steps.length - 1 ? `<span class="pcon">→</span>` : ""}
+  `).join("");
+}
+
+function inputStep(c, no){
+  const imgs = inputImages(c);
+  const qcard = `<div class="qcard"><span class="qcard-tag">Question</span>${esc(c.question)}</div>`;
+  return {
+    label: "Input",
+    value: `${imgs.length} images`,
+    tone: "",
+    html: stage("input", no, "Input", "Question + raw input",
+    [[`${imgs.length} images`, "pill"], [c.video ? "video" : "MMSI", "pill"]],
+    "",
+    gallery(imgs, { cols: Math.min(4, Math.max(2, imgs.length)), limit: 8 }),
+    c.options || c.question,
+    qcard)
+  };
+}
+
+function parseToolCount(kind){
+  const m = String(kind || "").match(/n=(\d+)/);
+  return m ? Number(m[1]) : 0;
+}
+
+function turnAssignments(c){
+  const tools = c.full_tools || [];
+  const turns = c.turns || [];
+  const nonFinalTurns = turns.filter((t) => !t.answer);
+  const assigned = [];
+  let cursor = 0;
+  nonFinalTurns.forEach((turn) => {
+    const n = parseToolCount(turn.kind);
+    for (let i = 0; i < n && cursor < tools.length; i += 1) assigned[cursor++] = turn;
+  });
+  const fallback = nonFinalTurns[nonFinalTurns.length - 1] || turns[0] || null;
+  while (cursor < tools.length) assigned[cursor++] = fallback;
+  return assigned;
+}
+
+function toolShortName(tool){
+  const map = {
+    detect_objects_tool: "Detect",
+    vlm_ground_objects: "Ground",
+    metric_depth3d_tool: "Measure",
+    metric_measurement_expert_tool: "Estimate",
+    relative_position_expert_tool: "Resolve",
+    counting_expert_tool: "Count",
+    visual_orientation_expert_tool: "Orient"
+  };
+  return map[tool.tool] || tool.tool.replace(/_tool|_/g, " ").trim();
+}
+
+function toolTitle(tool){
+  const map = {
+    detect_objects_tool: "Detect objects",
+    vlm_ground_objects: "Ground target objects",
+    metric_depth3d_tool: "Measure in 3D",
+    metric_measurement_expert_tool: "Initial metric estimate",
+    relative_position_expert_tool: "Resolve relative position",
+    counting_expert_tool: "Counting pass",
+    visual_orientation_expert_tool: "Orientation check"
+  };
+  return map[tool.tool] || tool.tool.replace(/_/g, " ");
+}
+
+function toolClass(tool){
+  if (tool.tool === "metric_depth3d_tool") return "metric";
+  if (/metric|relative|counting|orientation/.test(tool.tool)) return "tools";
+  return "tools";
+}
+
+function toolTone(tool){
+  if (tool.tool === "metric_depth3d_tool" || tool.tool === "relative_position_expert_tool") return "good";
+  if (tool.tool === "metric_measurement_expert_tool") return "warn";
+  if (tool.tool === "detect_objects_tool" || tool.tool === "vlm_ground_objects") return "warn";
+  return "";
+}
+
+function toolValue(tool){
+  const r = tool.result || {};
+  if (tool.tool === "metric_depth3d_tool" && Array.isArray(r.points)) return `${r.points.length} pts`;
+  if (r.count !== undefined) return `${r.count} found`;
+  if (r.result) return String(r.result);
+  if (r.value !== undefined) return `${r.value}${r.unit ? " " + r.unit : ""}`;
+  if (r.conclusion) return short(r.conclusion, 28);
+  const first = String(tool.summary || r.summary || "").split(/[;\n]/)[0].trim();
+  return short(first, 24) || "done";
+}
+
+function metricMarkers(tool){
+  const colors = ["#f59e0b","#38bdf8","#7ee2a0","#f472b6","#a78bfa","#f87171","#fde047","#2dd4bf"];
+  const pts = [];
+  ((tool.result && tool.result.points) || []).forEach((p) => {
+    const xyz = p.xyz_world || p.world_xyz;
+    if (Array.isArray(xyz) && xyz.length === 3 && pts.length < 8){
+      pts.push({ label: p.label || "point", xyz, color: colors[pts.length % colors.length] });
+    }
+  });
+  return pts;
+}
+
+function toolEvidenceImages(tool){
+  const r = tool.result || {};
+  const audit = r.audit_assets || {};
+  const metric = [audit.front_path, audit.topdown_path, r.vis_path, audit.depth_path].filter(Boolean);
+  if (tool.tool === "counting_expert_tool"){
+    const debug = r.debug || {};
+    const servedVis = extractImages(r).filter((p) => isServedImage(p) && !/decoded_images\//.test(String(p)));
+    const frameImgs = []
+      .concat((debug.per_frame || []).map((x) => x && x.image_path))
+      .concat(((debug.query_attempts || []).flat() || []).map((x) => x && x.image_path))
+      .concat(extractImages(tool.arguments));
+    return unique(servedVis.length ? servedVis : frameImgs).filter(isServedImage).slice(0, 12);
+  }
+  if (tool.tool === "relative_position_expert_tool"){
+    const servedResult = extractImages(tool.result).filter((p) => isServedImage(p));
+    const context = extractImages(tool.arguments);
+    return unique(servedResult.length ? servedResult : context).filter(isServedImage).slice(0, 12);
+  }
+  const general = extractImages(tool.result).filter((p) => !/decoded_images\//.test(String(p)));
+  return unique(metric.length ? metric : general).filter(isServedImage);
+}
+
+function metricToolVisual(tool){
+  const r = tool.result || {};
+  const audit = r.audit_assets || {};
+  const projections = unique([audit.front_path, audit.topdown_path, r.vis_path, audit.depth_path].map((p) => localAssetPath(p))).filter(isServedImage);
+  const labels = projections.map(projectionLabel);
+  const ply = localAssetPath(audit.ply_path);
+  const markers = metricMarkers(tool);
+  const legend = markers.slice(0, 6).map((m) => `<span class="lg"><i style="color:${esc(m.color)};background:${esc(m.color)}"></i>${esc(m.label)}</span>`).join("");
+  const markerData = esc(JSON.stringify(markers));
+  if (!ply){
+    return gallery(projections, { cols: Math.min(3, Math.max(1, projections.length)), limit: 4, labels, plots: true });
+  }
+  const figures = projections.slice(0, 3).map((path, i) => imageFigure(path, labels[i]));
+  return `<div class="ply-row" style="--plot-cols:${Math.max(1, figures.length)}">
+    <div class="ply3d" data-ply="${esc(ply)}" data-markers="${markerData}">
+      <div class="ply-badge"><span class="live-dot"></span>LIVE 3D · point cloud</div>
+      <div class="ply-hint">drag to rotate · scroll to zoom</div>
+      <div class="ply-legend">${legend || "point cloud"}</div>
+    </div>
+    ${figures.length ? `<div class="ply-plots">${figures.join("")}</div>` : ""}
+  </div>`;
+}
+
+function toolVisual(tool){
+  if (tool.tool === "metric_depth3d_tool") return metricToolVisual(tool);
+  const imgs = toolEvidenceImages(tool);
+  return gallery(imgs, { cols: Math.min(4, Math.max(1, imgs.length)), limit: 8 });
+}
+
+function toolReason(tool, turn){
+  if (turn && turn.thinking) return short(turn.thinking, 300);
+  return short(tool.summary || tool.result?.summary || "Tool result recorded in the package.", 300);
+}
+
+const KNOWN_TOOLS = [
+  "metric_measurement_expert_tool",
+  "relative_position_expert_tool",
+  "visual_orientation_expert_tool",
+  "metric_depth3d_tool",
+  "vlm_ground_objects",
+  "counting_expert_tool",
+  "detect_objects_tool"
+];
+
+function eventToolName(label){
+  return KNOWN_TOOLS.find((tool) => label === tool || label.startsWith(tool + "_")) || label;
+}
+
+function parseExecutionSummary(prompt){
+  const events = [];
+  const re = /^-\s+(.+?)_iter(\d+):\s*(.+)$/gm;
+  let m;
+  while ((m = re.exec(prompt || ""))){
+    events.push({
+      label: m[1],
+      tool: eventToolName(m[1]),
+      iter: Number(m[2]),
+      status: m[3].trim()
+    });
+  }
+  return events;
+}
+
+function parseObservationBlocks(prompt){
+  const blocks = [];
+  const start = String(prompt || "").indexOf("Tool Observations:");
+  if (start < 0) return blocks;
+  const text = String(prompt).slice(start);
+  const re = /\[Observation from ([^\]]+)\]:\n([\s\S]*?)(?=\n\n\[Observation from |\n\n?$)/g;
+  let m;
+  while ((m = re.exec(text))){
+    const label = m[1].trim();
+    blocks.push({ label, tool: eventToolName(label), text: m[2].trim() });
+  }
+  return blocks;
+}
+
+function imageDelta(prevTurn, curTurn){
+  const prev = new Set(((prevTurn && prevTurn.images) || []).filter(isServedImage));
+  return unique(((curTurn && curTurn.images) || []).filter(isServedImage).filter((img) => !prev.has(img)));
+}
+
+function buildHighLevelEvents(c){
+  const turns = c.turns || [];
+  let prevSummary = [];
+  const events = [];
+  turns.forEach((turn, turnIndex) => {
+    const summary = parseExecutionSummary(turn.prompt || "");
+    let delta = [];
+    if (summary.length >= prevSummary.length && prevSummary.every((x, i) => summary[i] && summary[i].label === x.label && summary[i].iter === x.iter)){
+      delta = summary.slice(prevSummary.length);
+    } else {
+      const seen = new Map();
+      prevSummary.forEach((x) => {
+        const key = `${x.label}|${x.iter}`;
+        seen.set(key, (seen.get(key) || 0) + 1);
+      });
+      summary.forEach((x) => {
+        const key = `${x.label}|${x.iter}`;
+        const count = seen.get(key) || 0;
+        if (count) seen.set(key, count - 1);
+        else delta.push(x);
+      });
+    }
+    if (delta.length){
+      const obsBlocks = parseObservationBlocks(turn.prompt || "");
+      const obsExact = new Map();
+      const obsByTool = new Map();
+      obsBlocks.forEach((obs) => {
+        if (!obsExact.has(obs.label)) obsExact.set(obs.label, []);
+        obsExact.get(obs.label).push(obs);
+        if (!obsByTool.has(obs.tool)) obsByTool.set(obs.tool, []);
+        obsByTool.get(obs.tool).push(obs);
+      });
+      const prevTurn = turns[turnIndex - 1] || null;
+      const imgs = imageDelta(prevTurn, turn);
+      delta.forEach((event) => {
+        let obs = null;
+        const exact = obsExact.get(event.label);
+        if (exact && exact.length) obs = exact.shift();
+        else {
+          const queue = obsByTool.get(event.tool);
+          if (queue && queue.length) obs = queue.shift();
+        }
+        events.push({
+          ...event,
+          observation: obs ? obs.text : "",
+          causedByTurn: prevTurn,
+          observedInTurn: turn,
+          imageDelta: imgs
+        });
+      });
+    }
+    prevSummary = summary;
+  });
+  if (!events.length){
+    (c.full_tools || []).forEach((tool) => {
+      events.push({
+        label: tool.tool,
+        tool: tool.tool,
+        iter: tool.idx,
+        status: "executed",
+        observation: tool.summary || tool.result?.summary || "",
+        causedByTurn: (c.turns || []).find((t) => t.thinking) || null,
+        observedInTurn: null,
+        imageDelta: []
+      });
+    });
+  }
+  return events;
+}
+
+function attachFullTools(c, events){
+  const fullTools = [...(c.full_tools || [])].sort((a, b) => Number(a.idx || 0) - Number(b.idx || 0));
+  let cursor = 0;
+  events.forEach((event) => {
+    const found = fullTools.findIndex((tool, idx) => idx >= cursor && tool.tool === event.tool);
+    if (found >= cursor){
+      event.fullTools = fullTools.slice(cursor, found + 1);
+      cursor = found + 1;
+    } else {
+      event.fullTools = [];
+    }
+  });
+  if (cursor < fullTools.length){
+    if (events.length) events[events.length - 1].fullTools.push(...fullTools.slice(cursor));
+    else fullTools.slice(cursor).forEach((tool) => events.push({ label: tool.tool, tool: tool.tool, iter: tool.idx, status: "executed", observation: tool.summary || "", fullTools: [tool], imageDelta: [] }));
+  }
+  return events;
+}
+
+function eventValue(event){
+  const anchor = [...(event.fullTools || [])].reverse().find((tool) => tool.tool === event.tool) || (event.fullTools || [])[0];
+  if (anchor) return toolValue(anchor);
+  const obs = event.observation || event.status || "";
+  if (/skipped|uncertain/i.test(obs)) return "uncertain";
+  const answer = String(obs).match(/conclusion:\s*([^.\n]+)/i) || String(obs).match(/<answer>([\s\S]*?)<\/answer>/i);
+  if (answer) return short(answer[1].trim(), 26);
+  const found = String(obs).match(/Found\s+(\d+)\s+objects?/i);
+  if (found) return `${found[1]} found`;
+  const metric = String(obs).match(/([a-z_]+=\s*)?(-?\d+(?:\.\d+)?)\s*m\b/i);
+  if (metric) return `${metric[2]} m`;
+  return short(String(obs).split(/[;\n.]/)[0], 24) || "done";
+}
+
+function eventEvidenceImages(event){
+  const fromTools = (event.fullTools || []).flatMap(toolEvidenceImages);
+  if (fromTools.length) return unique(fromTools).filter(isServedImage);
+  if (event.tool === "relative_position_expert_tool"){
+    const visible = ((event.observedInTurn && event.observedInTurn.images) || []).filter(isServedImage);
+    const generated = visible.filter((img) => !/decoded_images\//.test(String(img)));
+    return unique(generated.length ? generated : visible).slice(0, 12);
+  }
+  const fallback = (event.imageDelta || []).filter((img) => {
+    const name = fileName(img);
+    return name.includes(event.label) || name.includes(event.tool);
+  });
+  return unique(fallback).filter(isServedImage);
+}
+
+function eventReason(event){
+  const thinking = event.causedByTurn && event.causedByTurn.thinking;
+  if (thinking) return short(thinking, 330);
+  return short(event.observation || event.status || "Tool result recorded in the package.", 330);
+}
+
+function eventVisual(event){
+  const metricTools = (event.fullTools || []).filter((tool) => tool.tool === "metric_depth3d_tool");
+  if (metricTools.length){
+    if (metricTools.length === 1 && event.tool === "metric_depth3d_tool"){
+      return metricToolVisual(metricTools[0]);
+    }
+    const cards = metricTools.map((tool) => `
+      <div class="metric-bundle">
+        <div class="mini">
+          <h3>Attached DA3 ${esc(tool.idx)} · <code>${esc(toolValue(tool))}</code></h3>
+          <p>${esc(short(tool.summary || tool.result?.summary || "", 190))}</p>
+        </div>
+        ${metricToolVisual(tool)}
+      </div>
+    `).join("");
+    const otherImages = unique(eventEvidenceImages(event).filter((img) => !metricTools.some((tool) => toolEvidenceImages(tool).includes(img))));
+    return `<div class="metric-bundles">${cards}</div>${otherImages.length ? gallery(otherImages, { cols: Math.min(4, Math.max(1, otherImages.length)), limit: 8 }) : ""}`;
+  }
+  const imgs = eventEvidenceImages(event);
+  return gallery(imgs, { cols: Math.min(4, Math.max(1, imgs.length)), limit: 10 });
+}
+
+function eventStage(event, no){
+  const pseudo = { tool: event.tool, result: {}, summary: event.observation };
+  const chips = [
+    [event.tool.replace(/_/g, " "), event.tool === "metric_depth3d_tool" || event.tool === "relative_position_expert_tool" ? "tool green" : "tool amber"],
+    [eventValue(event), toolTone(pseudo) === "good" ? "pill good" : toolTone(pseudo) === "warn" ? "pill warn" : "pill"]
+  ];
+  const evidenceCount = eventEvidenceImages(event).length;
+  if (evidenceCount) chips.push([`${evidenceCount} evidence`, "pill"]);
+  if (event.observedInTurn) chips.push([`iter ${event.iter}`, "pill"]);
+  const raw = {
+    event: { label: event.label, tool: event.tool, iter: event.iter, status: event.status, observation: event.observation },
+    caused_by_turn: event.causedByTurn ? { idx: event.causedByTurn.idx, kind: event.causedByTurn.kind, thinking: event.causedByTurn.thinking, response: event.causedByTurn.response } : null,
+    attached_tools: (event.fullTools || []).map((tool) => ({ idx: tool.idx, tool: tool.tool, summary: tool.summary, arguments: tool.arguments, result: tool.result, source_json: tool.source_json }))
+  };
+  return {
+    label: toolShortName(pseudo),
+    value: eventValue(event),
+    tone: toolTone(pseudo),
+    html: stage(toolClass(pseudo), no, `Step ${no}`, toolTitle(pseudo), chips, eventReason(event), eventVisual(event), raw)
+  };
+}
+
+function buildChronologicalSteps(c){
+  let no = 0;
+  const steps = [inputStep(c, no++)];
+  const events = attachFullTools(c, buildHighLevelEvents(c));
+  events.forEach((event) => steps.push(eventStage(event, no++)));
+  steps.push(answerStep(c, no++));
+  return steps;
+}
+
+function toolStep(tool, no, turn){
+  const imgs = toolEvidenceImages(tool);
+  const chips = [
+    [tool.tool.replace(/_/g, " "), tool.tool === "metric_depth3d_tool" || tool.tool === "relative_position_expert_tool" ? "tool green" : "tool amber"],
+    [toolValue(tool), toolTone(tool) === "good" ? "pill good" : toolTone(tool) === "warn" ? "pill warn" : "pill"]
+  ];
+  if (imgs.length) chips.push([`${imgs.length} evidence`, "pill"]);
+  if (turn) chips.push([`turn ${turn.idx}`, "pill"]);
+  return {
+    label: toolShortName(tool),
+    value: toolValue(tool),
+    tone: toolTone(tool),
+    html: stage(toolClass(tool), no, `Step ${tool.idx}`, toolTitle(tool), chips, toolReason(tool, turn), toolVisual(tool), {
+      turn: turn ? { idx: turn.idx, kind: turn.kind, thinking: turn.thinking, response: turn.response } : null,
+      tool: { idx: tool.idx, name: tool.tool, summary: tool.summary, arguments: tool.arguments, result: tool.result, source_json: tool.source_json }
+    })
+  };
+}
+
+function answerStep(c, no){
+  const ans = answerText(c);
+  const visual = `<div class="final-line"><span class="ok-tick">${isGood(c) ? "✓" : "!"}</span><span>Final answer <b>${esc(ans || c.prediction)}</b> · prediction ${esc(c.prediction)} · GT ${esc(c.ground_truth)}</span></div>`;
+  const chips = cleanMode ? [] : [[isGood(c) ? "correct" : "check", isGood(c) ? "pill good" : "pill warn"]];
+  if (!cleanMode && (c.final_answer || c.raw_output)) chips.push([`raw ${c.final_answer || c.raw_output || ""}`, "pill"]);
+  return {
+    label: "Answer",
+    value: ans || c.prediction,
+    tone: isGood(c) ? "good" : "warn",
+    html: stage(`answer${isGood(c) ? " seg-ok" : " seg-warn"}`, no, "Result", "Answer",
+    chips,
+    cleanMode ? "" : "Final answer recorded from the S-Agent trajectory.",
+    visual, c.raw_output || c.final_answer)
+  };
+}
+
+function cleanupPly(){
+  activePlys.forEach((item) => {
+    cancelAnimationFrame(item.raf);
+    item.renderer.dispose();
+  });
+  activePlys = [];
+}
+
+function inlinePlyCandidates(url){
+  const clean = String(url || "").split(/[?#]/)[0];
+  const relative = clean.includes("/trajectories/") ? clean.split("/trajectories/").pop() : clean;
+  return unique([clean, decodeURIComponent(clean), relative, decodeURIComponent(relative), fileName(clean)]);
+}
+
+function inlinePlyBase64(url){
+  const store = window.SAGENT_PLY_B64 || {};
+  return inlinePlyCandidates(url).map((key) => store[key]).find(Boolean) || "";
+}
+
+function inlinePlyScript(url){
+  const clean = String(url || "").split(/[?#]/)[0];
+  if (!/_pointcloud\.ply$/i.test(clean)) return "";
+  return clean.replace(/\/[^/]+_pointcloud\.ply$/i, "/ply_inline_data.js");
+}
+
+function decodePlyBase64(b64){
+  const raw = atob(b64);
+  const bytes = new Uint8Array(raw.length);
+  for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+  return bytes.buffer;
+}
+
+function loadInlinePly(url, loader){
+  const existing = inlinePlyBase64(url);
+  if (existing) return Promise.resolve(loader.parse(decodePlyBase64(existing)));
+  const src = inlinePlyScript(url);
+  if (!src) return Promise.reject(new Error("No inline PLY fallback"));
+  inlinePlyScripts[src] = inlinePlyScripts[src] || new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = src;
+    script.onload = resolve;
+    script.onerror = () => reject(new Error(`Inline PLY fallback failed: ${src}`));
+    document.head.appendChild(script);
+  });
+  return inlinePlyScripts[src].then(() => {
+    const b64 = inlinePlyBase64(url);
+    if (!b64) throw new Error(`Inline PLY data missing: ${url}`);
+    return loader.parse(decodePlyBase64(b64));
+  });
+}
+
+function loadPlyGeometry(url, onLoad, onError){
+  const loader = new THREE.PLYLoader();
+  if (location.protocol === "file:"){
+    loadInlinePly(url, loader).then(onLoad).catch(onError);
+    return;
+  }
+  loader.load(url, onLoad, undefined, () => {
+    loadInlinePly(url, loader).then(onLoad).catch(onError);
+  });
+}
+
+function initPlyViewer(el){
+  if (!el || !window.THREE || !THREE.PLYLoader || !THREE.OrbitControls) return;
+  let markers = [];
+  try { markers = JSON.parse(el.dataset.markers || "[]"); } catch { markers = []; }
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x080b10);
+  const camera = new THREE.PerspectiveCamera(58, el.clientWidth / el.clientHeight, 0.01, 1000);
+  const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:false });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setSize(el.clientWidth, el.clientHeight);
+  el.appendChild(renderer.domElement);
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  scene.add(new THREE.AmbientLight(0xffffff, .72));
+  const key = new THREE.DirectionalLight(0xffffff, .9);
+  key.position.set(2, 3, 4);
+  scene.add(key);
+  loadPlyGeometry(el.dataset.ply, (geo) => {
+    geo.computeBoundingBox();
+    const center = new THREE.Vector3(), size = new THREE.Vector3();
+    geo.boundingBox.getCenter(center); geo.boundingBox.getSize(size);
+    geo.translate(-center.x, -center.y, -center.z);
+    const radius = Math.max(size.x, size.y, size.z) || 1;
+    scene.add(new THREE.Points(geo, new THREE.PointsMaterial({ size:Math.max(radius / 420, .004), vertexColors:geo.hasAttribute("color"), color:geo.hasAttribute("color") ? 0xffffff : 0xc8d2d5 })));
+    markers.forEach((m) => {
+      const sphere = new THREE.Mesh(new THREE.SphereGeometry(radius / 65, 16, 16), new THREE.MeshBasicMaterial({ color:new THREE.Color(m.color) }));
+      sphere.position.set(m.xyz[0] - center.x, m.xyz[1] - center.y, m.xyz[2] - center.z);
+      scene.add(sphere);
+    });
+    camera.position.set(radius * .7, radius * .62, radius * 1.35);
+    camera.near = radius / 1000; camera.far = radius * 22; camera.updateProjectionMatrix();
+    controls.target.set(0,0,0); controls.update(); el.dataset.loaded = "1";
+    const item = { renderer, raf:0 };
+    activePlys.push(item);
+    const animate = () => { item.raf = requestAnimationFrame(animate); controls.update(); renderer.render(scene, camera); };
+    animate();
+  }, (err) => {
+    el.dataset.plyError = err && err.message ? err.message : "PLY load failed";
+    el.classList.add("ply-fail");
+    activePlys.push({ renderer, raf:0 });
+  });
+}
+
+function renderPlys(){
+  cleanupPly();
+  document.querySelectorAll(".ply3d[data-ply]").forEach((el) => initPlyViewer(el));
+}
+
+function nav(delta){
+  const idx = Math.max(0, CASES.findIndex((c) => c.case_id === currentId));
+  currentId = CASES[(idx + delta + CASES.length) % CASES.length].case_id;
+  render();
+}
+
+function render(){
+  const c = CASES.find((x) => x.case_id === currentId) || CASES[0];
+  if (!c) return;
+  currentId = c.case_id;
+  setUrl();
+  $("app").className = `sheet${cleanMode ? " compact" : ""}`;
+  renderHeader(c);
+  const steps = buildChronologicalSteps(c);
+  renderPipeline(steps.slice(1, -1));
+  $("trace").innerHTML = steps.map((s) => s.html).join("");
+  $("note").textContent = `S-Agent project page · ${CASES.length} MMSI sessions · curated trajectory view`;
+  renderPlys();
+}
+
+document.body.addEventListener("click", (event) => {
+  const btn = event.target.closest("[data-lightbox]");
+  if (!btn) return;
+  const box = $("lightbox");
+  box.querySelector("img").src = btn.dataset.lightbox;
+  box.classList.add("show");
+});
+$("lightbox").addEventListener("click", () => {
+  $("lightbox").classList.remove("show");
+  $("lightbox").querySelector("img").src = "";
+});
+window.addEventListener("resize", () => {
+  document.querySelectorAll(".ply3d[data-ply]").forEach((el, idx) => {
+    const item = activePlys[idx];
+    if (item) item.renderer.setSize(el.clientWidth, el.clientHeight);
+  });
+});
+render();
+</script>
+</body>
+</html>

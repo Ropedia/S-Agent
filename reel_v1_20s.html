@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1920, initial-scale=1">
+<title>S-Agent — Demo Reel</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>
+  /* ============================================================
+     S-Agent 20.0s demo reel. Everything visual leans on styles.css
+     (te* logo + traj* trajectory classes). New CSS = stage layout,
+     title reveal, Act-3 grid, match-cut keyframes, scan/flash beats.
+     ============================================================ */
+  html,body{margin:0;padding:0;}
+  body{
+    margin:0;width:1920px;height:1080px;overflow:hidden;background:#020502;
+    font-family:var(--font-sans);color:var(--ink);
+  }
+
+  /* One persistent dark world. Reuses .traj-embed-bg grid + glow. */
+  #reel-stage{position:absolute;left:0;top:0;width:1920px;height:1080px;overflow:hidden;background:#020502;}
+  #reel-world{position:absolute;inset:0;z-index:0;}
+  #reel-world .traj-embed-bg{position:absolute;inset:0;}
+
+  /* Connective tissue spanning all acts: a recurring scan-sweep + accent flash
+     fire on every act boundary so the four acts read as one continuous world. */
+  #reel-scan{
+    position:absolute;inset:0;z-index:9;pointer-events:none;opacity:0;mix-blend-mode:screen;
+    background:linear-gradient(100deg,transparent 0 44%,rgba(141,243,223,.16) 49%,rgba(204,255,160,.22) 51%,transparent 56% 100%);
+    transform:translateX(-100%);
+  }
+  #reel-scan.go{animation:reelScanSweep .62s cubic-bezier(.3,.7,.2,1) both;}
+  @keyframes reelScanSweep{0%{opacity:.0;transform:translateX(-100%);}18%{opacity:1;}100%{opacity:0;transform:translateX(100%);}}
+  #reel-flash{
+    position:absolute;inset:0;z-index:10;pointer-events:none;opacity:0;
+    background:radial-gradient(circle at 50% 50%,rgba(204,255,160,.20),rgba(141,243,223,.06) 46%,transparent 70%);
+  }
+  #reel-flash.go{animation:reelFlash .5s ease-out both;}
+  @keyframes reelFlash{0%{opacity:0;}22%{opacity:1;}100%{opacity:0;}}
+
+  /* Acts stack in the same coordinate space; opacity/transform driven by JS. */
+  .reel-act{position:absolute;inset:0;z-index:1;display:grid;place-items:center;opacity:0;visibility:hidden;}
+  .reel-act.is-live{opacity:1;visibility:visible;}
+
+  /* ---- ACT 1 : title ---- */
+  .reel-title-wrap{
+    position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:1.6rem;text-align:center;transform-origin:50% 46%;
+  }
+  .reel-logo-lockup{display:flex;align-items:center;gap:1.4rem;}
+  .reel-logo-lockup .title-eye{height:280px;width:auto;}
+  .reel-wordmark{
+    display:flex;align-items:baseline;font-family:var(--font-sans);font-weight:900;
+    font-size:148px;line-height:.9;letter-spacing:-.03em;color:var(--ink);
+  }
+  /* clip/mask reveal + per-letter stagger with overshoot easing */
+  .reel-wordmark .wm-letter{
+    display:inline-block;transform:translateY(118%) skewY(7deg);opacity:0;
+    will-change:transform;
+  }
+  .reel-wordmark .wm-tail{color:var(--accent);}
+  #act-title.is-live .wm-letter{animation:reelLetterRise .82s cubic-bezier(.2,1.25,.28,1) both;}
+  #act-title.is-live .wm-letter.l0{animation-delay:.46s;}
+  #act-title.is-live .wm-letter.l1{animation-delay:.55s;}
+  #act-title.is-live .wm-letter.l2{animation-delay:.62s;}
+  #act-title.is-live .wm-letter.l3{animation-delay:.69s;}
+  #act-title.is-live .wm-letter.l4{animation-delay:.76s;}
+  #act-title.is-live .wm-letter.l5{animation-delay:.83s;}
+  #act-title.is-live .wm-letter.l6{animation-delay:.90s;}
+  @keyframes reelLetterRise{
+    0%{transform:translateY(118%) skewY(7deg);opacity:0;}
+    62%{transform:translateY(-7%) skewY(0deg);opacity:1;}
+    100%{transform:translateY(0) skewY(0deg);opacity:1;}
+  }
+
+  .reel-tagline-clip{overflow:hidden;}
+  .reel-tagline{
+    font-family:var(--font-mono);font-weight:600;font-size:34px;letter-spacing:.04em;
+    color:var(--ink-2);max-width:1180px;
+    transform:translateY(110%);opacity:0;
+  }
+  .reel-tagline .accent{color:var(--accent-ink);}
+  #act-title.is-live .reel-tagline{animation:reelTagReveal .9s cubic-bezier(.2,1.1,.28,1) 1.02s both;}
+  @keyframes reelTagReveal{
+    0%{transform:translateY(110%);opacity:0;}
+    70%{transform:translateY(-4%);opacity:1;}
+    100%{transform:translateY(0);opacity:1;}
+  }
+
+  /* match-cut: the logo beacon flare that expands into act-2's first card */
+  .reel-flare{
+    position:absolute;left:50%;top:50%;width:46px;height:46px;border-radius:50%;
+    transform:translate(-50%,-50%) scale(0);
+    background:radial-gradient(circle,#f4fff0 0%,#8df3df 38%,rgba(204,255,160,.0) 72%);
+    pointer-events:none;opacity:0;z-index:5;
+  }
+
+  /* ---- ACT 2 : hero trajectory ---- */
+  .reel-hero-frame{
+    position:relative;width:1500px;height:900px;display:flex;flex-direction:column;overflow:hidden;
+    border:1px solid rgba(204,255,160,.28);border-radius:14px;background:#020502;
+    box-shadow:0 40px 130px rgba(0,0,0,.74),0 0 0 1px rgba(255,255,255,.035),0 0 80px rgba(204,255,160,.10);
+    transform-origin:50% 50%;
+  }
+  /* reuse the trajectory window topline flow */
+  .reel-hero-frame::before{
+    content:"";position:absolute;left:0;right:0;top:0;height:3px;z-index:6;
+    background:linear-gradient(90deg,transparent,var(--accent),var(--teal),transparent);
+    background-size:180% 100%;animation:trajToplineFlow 2.8s linear infinite;
+  }
+  .reel-hero-bar{
+    position:relative;z-index:3;display:flex;align-items:center;gap:1rem;
+    padding:1.05rem 1.4rem;border-bottom:1px solid rgba(204,255,160,.18);
+    background:linear-gradient(180deg,rgba(204,255,160,.08),rgba(204,255,160,.025)),#020502;overflow:hidden;
+  }
+  .reel-hero-bar::after{
+    content:"";position:absolute;inset:0 auto 0 -24%;width:22%;pointer-events:none;
+    background:linear-gradient(90deg,transparent,rgba(204,255,160,.16),transparent);
+    animation:trajBarSweep 3.6s ease-in-out infinite;
+  }
+  .reel-hero-bar .title-eye{height:34px;width:auto;}
+  .reel-hero-bar .rk{font-family:var(--font-mono);font-weight:700;font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-ink);}
+  .reel-hero-bar h2{margin:0;font-size:1.05rem;font-weight:800;color:var(--ink);}
+  .reel-hero-bar .rk-case{margin-left:auto;font-family:var(--font-mono);font-size:.82rem;color:var(--muted);letter-spacing:.06em;}
+  /* host the trajectory content; .traj-content provides grid + perspective */
+  #reelTrajContent{position:relative;flex:1;min-height:0;}
+  /* enlarge native card for the 1500x900 frame */
+  #reelTrajContent .traj-native-card{width:min(100%,1320px);height:min(100%,640px);}
+
+  /* ---- ACT 3 : case wall ---- */
+  .reel-wall{
+    position:relative;width:1640px;display:flex;flex-direction:column;gap:1.4rem;
+    transform-origin:50% 50%;
+  }
+  .reel-wall-head{display:flex;align-items:center;gap:1rem;justify-content:center;}
+  .reel-wall-head .title-eye{height:46px;width:auto;}
+  .reel-wall-head .rk{font-family:var(--font-mono);font-weight:700;font-size:1.05rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent-ink);}
+  .reel-wall-head .rk b{color:var(--ink);}
+  .reel-grid{
+    display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:1fr;gap:1.2rem;
+  }
+  /* 5 cards: top row 3, bottom row 2 centered (each spans 2 of 6 cols) */
+  .reel-card{grid-column:span 2;}
+  .reel-card.r2a{grid-column:2 / span 2;}
+  .reel-card.r2b{grid-column:4 / span 2;}
+  .reel-card-inner{
+    position:relative;display:flex;flex-direction:column;overflow:hidden;height:100%;
+    border:1px solid rgba(204,255,160,.26);border-radius:12px;
+    background:linear-gradient(160deg,rgba(10,18,9,.96),rgba(3,6,4,.98));
+    box-shadow:0 28px 70px -42px rgba(0,0,0,.9),0 0 44px rgba(204,255,160,.07),inset 0 1px 0 rgba(255,255,255,.05);
+    opacity:0;transform:translateY(26px) scale(.94);
+  }
+  .reel-card-inner::after{
+    content:"";position:absolute;left:0;right:0;top:0;height:1px;z-index:3;pointer-events:none;
+    background:linear-gradient(90deg,transparent,var(--accent),var(--teal),transparent);
+    opacity:.8;animation:trajToplineFlow 2.3s linear infinite;
+  }
+  #act-wall.is-live .reel-card-inner{animation:reelCardLand .62s cubic-bezier(.2,.92,.24,1) both;}
+  #act-wall.is-live .reel-card.c0 .reel-card-inner{animation-delay:.04s;}
+  #act-wall.is-live .reel-card.c1 .reel-card-inner{animation-delay:.13s;}
+  #act-wall.is-live .reel-card.c2 .reel-card-inner{animation-delay:.22s;}
+  #act-wall.is-live .reel-card.c3 .reel-card-inner{animation-delay:.31s;}
+  #act-wall.is-live .reel-card.c4 .reel-card-inner{animation-delay:.40s;}
+  @keyframes reelCardLand{
+    0%{opacity:0;transform:translateY(26px) scale(.94);}
+    66%{opacity:1;transform:translateY(-3px) scale(1.008);}
+    100%{opacity:1;transform:none;}
+  }
+  .reel-card-media{position:relative;height:184px;overflow:hidden;background:#050805;border-bottom:1px solid rgba(204,255,160,.14);}
+  .reel-card-media img{display:block;width:100%;height:100%;object-fit:cover;animation:trajImageFloat 7.5s ease-in-out infinite alternate;}
+  .reel-card-media::after{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:linear-gradient(110deg,transparent 0 42%,rgba(245,247,240,.14) 50%,transparent 58% 100%);
+    transform:translateX(-120%);animation:trajMediaSheen 1.55s cubic-bezier(.2,.8,.2,1) .24s both;
+  }
+  .reel-card-cat{
+    position:absolute;left:.6rem;top:.6rem;z-index:2;padding:.24rem .5rem;border-radius:6px;
+    font-family:var(--font-mono);font-weight:900;font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;
+    background:var(--accent);color:#020502;animation:trajBadgePop .48s cubic-bezier(.18,1.3,.3,1) both;
+  }
+  .reel-card-cat.cat-cnt{background:var(--teal);}
+  .reel-card-body{flex:1;display:flex;flex-direction:column;gap:.55rem;padding:.9rem 1rem 1rem;}
+  .reel-card-id{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;}
+  .reel-card-q{font-size:.96rem;line-height:1.32;color:var(--ink);font-weight:650;min-height:2.5em;}
+  .reel-card-q b{color:var(--accent-ink);font-weight:850;}
+  .reel-card-ans{margin-top:auto;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;}
+  .reel-stat{
+    border:1px solid rgba(204,255,160,.26);border-radius:999px;padding:.34rem .62rem;
+    font-family:var(--font-mono);font-weight:850;font-size:.78rem;color:var(--accent-ink);background:rgba(204,255,160,.08);
+  }
+  .reel-stat.gt{color:var(--muted);border-color:rgba(245,247,240,.2);background:rgba(255,255,255,.04);}
+  .reel-check{
+    display:inline-grid;place-items:center;width:1.55rem;height:1.55rem;border-radius:50%;margin-left:auto;
+    background:var(--teal);color:#020502;font-weight:900;font-size:.95rem;
+    box-shadow:0 0 14px rgba(141,243,223,.55);transform:scale(0);
+  }
+  #act-wall.is-live .reel-check{animation:reelCheckPop .5s cubic-bezier(.16,1.4,.3,1) both;}
+  #act-wall.is-live .reel-card.c0 .reel-check{animation-delay:.5s;}
+  #act-wall.is-live .reel-card.c1 .reel-check{animation-delay:.59s;}
+  #act-wall.is-live .reel-card.c2 .reel-check{animation-delay:.68s;}
+  #act-wall.is-live .reel-card.c3 .reel-check{animation-delay:.77s;}
+  #act-wall.is-live .reel-card.c4 .reel-check{animation-delay:.86s;}
+  @keyframes reelCheckPop{0%{transform:scale(0) rotate(-30deg);}68%{transform:scale(1.18) rotate(4deg);}100%{transform:scale(1);}}
+
+  /* ---- OUTRO ---- */
+  .reel-outro{display:flex;flex-direction:column;align-items:center;gap:1.5rem;text-align:center;transform-origin:50% 50%;}
+  .reel-outro .title-eye{height:230px;width:auto;}
+  .reel-outro-line{
+    font-family:var(--font-mono);font-weight:700;font-size:30px;letter-spacing:.06em;color:var(--ink);
+  }
+  .reel-outro-line .accent{color:var(--accent-ink);}
+  .reel-outro-affil{font-family:var(--font-mono);font-weight:600;font-size:21px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;}
+  #act-outro.is-live .reel-outro{animation:reelOutroRise .7s cubic-bezier(.2,1.05,.28,1) both;}
+  @keyframes reelOutroRise{0%{opacity:0;transform:translateY(22px) scale(.97);}100%{opacity:1;transform:none;}}
+</style>
+</head>
+<body>
+<div id="reel-stage">
+  <!-- ONE persistent dark backdrop across all acts (reused .traj-embed-bg) -->
+  <div id="reel-world">
+    <div class="traj-embed-bg"><span></span><span></span></div>
+  </div>
+
+  <!-- ACT 1 : TITLE -->
+  <section class="reel-act" id="act-title">
+    <div class="reel-title-wrap" id="titleWrap">
+      <div class="reel-logo-lockup" id="titleLogoSlot"></div>
+      <div class="reel-wordmark" aria-label="S-Agent">
+        <span class="wm-letter l0">S</span><span class="wm-letter l1 wm-tail">-</span><span class="wm-letter l2 wm-tail">A</span><span class="wm-letter l3 wm-tail">g</span><span class="wm-letter l4 wm-tail">e</span><span class="wm-letter l5 wm-tail">n</span><span class="wm-letter l6 wm-tail">t</span>
+      </div>
+      <div class="reel-tagline-clip">
+        <div class="reel-tagline">Spatial tool-use <span class="accent">elicits reasoning</span> for spatial intelligence</div>
+      </div>
+    </div>
+    <div class="reel-flare" id="titleFlare"></div>
+  </section>
+
+  <!-- ACT 2 : HERO trajectory -->
+  <section class="reel-act" id="act-hero">
+    <div class="reel-hero-frame" id="heroFrame">
+      <div class="reel-hero-bar">
+        <span id="heroBarLogo"></span>
+        <span class="rk">Trajectory</span>
+        <h2>Spatial tool-use, step by step</h2>
+        <span class="rk-case">CASE 6111 · spatial reasoning</span>
+      </div>
+      <!-- .traj-content gives grid-template-rows + perspective, exactly like the site -->
+      <div class="traj-content" id="reelTrajContent"></div>
+    </div>
+  </section>
+
+  <!-- ACT 3 : WALL of cases -->
+  <section class="reel-act" id="act-wall">
+    <div class="reel-wall" id="wallWrap">
+      <div class="reel-wall-head">
+        <span id="wallLogo"></span>
+        <span class="rk"><b>ReVSI</b> · zero-shot spatial reasoning · 5 / 5 correct</span>
+      </div>
+      <div class="reel-grid" id="reelGrid"></div>
+    </div>
+  </section>
+
+  <!-- OUTRO -->
+  <section class="reel-act" id="act-outro">
+    <div class="reel-outro" id="outroWrap">
+      <span id="outroLogo"></span>
+      <div class="reel-outro-line">ReVSI · zero-shot spatial reasoning · <span class="accent">5 / 5 correct</span></div>
+      <div class="reel-outro-affil">NTU · THU · ByteDance · NWPU · Ropedia</div>
+    </div>
+  </section>
+
+  <!-- connective-tissue overlays span every act -->
+  <div id="reel-scan"></div>
+  <div id="reel-flash"></div>
+</div>
+<script src="reel.js"></script>
+</body>
+</html>

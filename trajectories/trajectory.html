@@ -1,0 +1,1039 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<title>ReVSI · Key Trajectory Figure</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<style>
+  /* ── Tokens. "compact" mode = reassign these tokens only, never re-fork the layout. ── */
+  :root{
+    --ink:#111827; --muted:#5d6675; --line:#d7dce5; --soft:#f6f8fa; --soft2:#eef2f6;
+    --blue:#145fcf; --green:#16833a; --amber:#9a6200; --gray:#465469; --red:#b42318;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --gap-1:4px; --gap-2:8px; --gap-3:13px;
+    --row-pad:11px; --rail:46px; --node:28px; --copy-w:250px; --cols:2;
+    --fig-h:148px; --fig-strip-h:66px; --contact-h:112px;
+    --q-size:22px; --h2-size:16px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:#eef1f5;color:var(--ink);font:13px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,"PingFang SC","Microsoft YaHei",sans-serif}
+  body{min-height:100vh;padding:14px}
+  a{color:var(--blue);text-decoration:none}
+  a:hover{text-decoration:underline}
+  img,video{display:block;width:100%;background:#f3f4f6}
+  button{font:inherit}
+  .sheet{max-width:1180px;margin:0 auto;border:1px solid #cfd6e0;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 2px rgba(16,24,40,.04),0 8px 26px rgba(16,24,40,.06)}
+
+  /* ── Header ── */
+  header{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;align-items:start;padding:14px 18px 13px;border-bottom:1px solid var(--line)}
+  .head-main{min-width:0}
+  .brand{font:10px/1.2 var(--mono);font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:#9098a6}
+  h1.q{margin:3px 0 0;font-size:var(--q-size);line-height:1.14;font-weight:800;letter-spacing:-.01em;color:#0d1320;max-width:60ch}
+  h1.brand-title{margin:0;font-size:18px;line-height:1.2;font-weight:850;letter-spacing:-.01em;color:#0d1320}
+  .qcard{width:100%;border:1px solid var(--line);background:var(--soft);border-radius:7px;padding:7px 10px;font-size:13px;line-height:1.32;font-weight:650;color:#1f2937}
+  .qcard .qcard-tag{display:block;font:9.5px/1 var(--mono);font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#8a93a3;margin-bottom:4px}
+  .verdict{display:inline-flex;align-items:baseline;gap:7px;margin-top:10px;border:1px solid #b7dcc2;background:#edf9f0;border-radius:999px;padding:5px 14px;font-size:12.5px;font-weight:600;color:#1f5b34}
+  .verdict b{font-size:16px;font-weight:900;color:#0f4d28;font-variant-numeric:tabular-nums}
+  .verdict .sep{color:#9bc3a8}
+  .verdict em{font-style:normal;font-weight:800;color:#16833a}
+  /* ── Pipeline strip: tier-2 method-at-a-glance ── */
+  .pipeline{display:flex;align-items:center;flex-wrap:wrap;gap:var(--gap-1);list-style:none;margin:0;padding:9px 18px;border-bottom:1px solid var(--line);background:linear-gradient(#fbfcfe,#f5f8fb)}
+  .pchip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:3px 11px 3px 4px;font-size:11.5px;font-weight:650;color:#3b4554}
+  .pchip .pno{display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--soft2);font:10px/1 var(--mono);font-weight:800;color:var(--gray)}
+  .pchip .pval{font-weight:850;font-variant-numeric:tabular-nums;color:#1f2937}
+  .pchip.warn{border-color:#ecd49a;background:#fff8e8}
+  .pchip.warn .pno{background:#efd699;color:var(--amber)}
+  .pchip.warn .pval{color:var(--amber)}
+  .pchip.good{border-color:#b3dcbf;background:#edf9f0}
+  .pchip.good .pno{background:#cdeed6;color:var(--green)}
+  .pchip.good .pval{color:var(--green)}
+  .pcon{color:#aab4c2;font-weight:800;padding:0 2px;font-size:12px}
+
+  /* ── Floating step modules ── */
+  .trace{position:relative;display:grid;gap:10px;padding:13px 18px 16px;background:#f5f7fa}
+  .stage{position:relative;display:grid;grid-template-columns:var(--rail) minmax(0,1fr);gap:var(--gap-2);padding:var(--row-pad) 14px var(--row-pad) 0;border:1px solid #dde3ec;border-radius:10px;background:#fff;box-shadow:0 1px 2px rgba(16,24,40,.05),0 7px 18px rgba(16,24,40,.06);overflow:hidden}
+  .stage::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#d9e1ec}
+  .stage.input::before{background:#aac8f7}
+  .stage.count::before{background:#efd699}
+  .stage.merge::before,.stage.answer::before{background:#b7dfc2}
+  .stage.seg-warn::before{background:#e7c878}
+  .stage.seg-ok::before{background:#bcdfc6}
+  .stage:hover{box-shadow:0 1px 2px rgba(16,24,40,.06),0 10px 24px rgba(16,24,40,.09)}
+  .rail{position:relative;display:flex;align-items:flex-start;justify-content:center;padding-top:1px}
+  .node{position:relative;width:var(--node);height:var(--node);border:1.5px solid #c6d0df;border-radius:50%;background:#fff;display:grid;place-items:center;color:var(--gray);box-shadow:0 1px 0 rgba(17,24,39,.04)}
+  .node-no{font:13px/1 var(--mono);font-weight:800}
+  .node-icon{width:14px;height:14px;display:block}
+  .stage.input .node{color:var(--blue);border-color:#bcd3f7;background:#f3f8ff}
+  .stage.count .node{color:#8a5400;border-color:#efd99d;background:#fff9e9}
+  .stage.merge .node{color:var(--green);border-color:#a9d6b6;background:#f0fbf3}
+  .stage.answer .node{color:#fff;background:var(--green);border-color:var(--green)}
+  .stage-content{grid-column:2;min-width:0;display:grid;grid-template-columns:var(--copy-w) minmax(0,1fr);gap:var(--gap-3);align-items:start}
+  .copy{grid-column:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+  .visual{grid-column:2;min-width:0}
+  .kicker{font:10px/1 var(--mono);font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#9098a6}
+  h2{margin:0;font-size:var(--h2-size);line-height:1.2;font-weight:750;letter-spacing:-.005em;color:var(--ink)}
+
+  /* ── Step header: tool chip + ONE loud key pill (or a struck correction) + optional evidence chip ── */
+  .step-head{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:1px}
+  .tool{display:inline-flex;align-items:center;border:1px solid #cdd6e3;background:var(--soft);color:#5a6573;border-radius:5px;padding:2px 7px;font:10.5px/1.25 var(--mono);font-weight:700}
+  .tool.green{border-color:#b8dfc4;background:#ecf9ef;color:#176a34}
+  .tool.amber{border-color:#edd395;background:#fff8e7;color:#8a5400}
+  .pill{border:1px solid var(--line);background:var(--soft);border-radius:999px;padding:2px 10px;font-size:12px;font-weight:550;color:#374151;line-height:1.3}
+  .pill b{font-weight:850;font-variant-numeric:tabular-nums}
+  .pill .pq{font-weight:500;color:var(--muted)}
+  .pill.good{border-color:#acd8b8;background:#ecf9ef;color:var(--green)}
+  .pill.warn{border-color:#edd395;background:#fff8e7;color:var(--amber)}
+  .correction{display:inline-flex;align-items:center;gap:7px;flex-wrap:wrap}
+  .pill.was{opacity:.7;text-decoration:line-through;text-decoration-color:#caa55a}
+  .arr{color:#9aa6b6;font-weight:800}
+  .raw-input{display:flex;gap:var(--gap-3);align-items:flex-start;flex-wrap:wrap}
+  .raw-input>figure:first-child{flex:0 0 300px;max-width:100%;margin:0;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+  .raw-input>figure:first-child video{height:var(--fig-h);width:100%;object-fit:contain;background:#0c0f14;display:block}
+  .raw-input>figure:first-child figcaption{padding:4px 9px;color:#5b6573;font-size:10.5px;font-weight:600}
+  .raw-input .contact-fig{flex:1 1 340px;display:flex;flex-direction:column}
+  .raw-input .contact-fig img{height:auto;max-height:210px;width:100%;object-fit:contain}
+  .contact-row{margin-top:var(--gap-2)}
+  .contact-fig{display:inline-block;border:1px solid var(--line);background:#fafbfc;border-radius:6px;overflow:hidden;max-width:100%}
+  .contact-fig button{display:block;padding:0;border:0;background:transparent;cursor:zoom-in}
+  .contact-fig img{height:var(--contact-h);width:auto;max-width:100%;object-fit:contain;display:block}
+  .contact-fig figcaption{padding:4px 9px;color:#6b7480;font-size:10px;font-weight:600;border-top:1px solid var(--line);white-space:nowrap}
+  .reason{border-left:2px solid #cdd6e3;background:transparent;padding:1px 0 1px 10px;color:#475061;font-size:12px;font-weight:450;line-height:1.34;margin:2px 0 0}
+
+  /* ── Evidence: one grid, stable media slots, full-frame images by default. ── */
+  .gallery{display:grid;grid-template-columns:repeat(var(--cols,2),minmax(0,1fr));gap:var(--gap-2)}
+  .gallery.cols-1{--cols:1}
+  .gallery.cols-2{--cols:2}
+  .gallery.cols-3{--cols:3}
+  .gallery.cols-4{--cols:4}
+  .gallery.strip{--cols:4;gap:var(--gap-1)}
+  figure{margin:0;border:1px solid var(--line);background:#fff;overflow:hidden;border-radius:6px}
+  figure button{display:block;width:100%;padding:0;border:0;background:transparent;cursor:zoom-in}
+  figure img{width:auto;max-width:100%;height:auto;background:#fafbfc;display:block}
+  .gallery figure button{height:var(--fig-h);display:flex;align-items:center;justify-content:center;background:#0c0f14;overflow:hidden}
+  .gallery figure img{max-height:100%;object-fit:contain;background:#0c0f14}
+  figure video.vid{width:100%;height:var(--fig-h);object-fit:contain;background:#0c0f14;display:block}
+  .gallery.strip figure button{height:var(--fig-strip-h)}
+  .gallery.strip figure video.vid{height:var(--fig-strip-h)}
+  .gallery.plots figure{background:#0c0f14}
+  .gallery.plots figure img{width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain;background:#0c0f14}
+  .gallery.grounding figure{background:#0c0f14}
+  .gallery.grounding figure img{width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain;background:#0c0f14}
+  .contact-grid{display:grid;grid-template-columns:repeat(var(--cols,8),minmax(0,1fr));gap:var(--gap-1)}
+  .contact-tile button{display:block;width:100%;aspect-ratio:5/4;border:0;background-color:#0c0f14;background-image:var(--sheet-img);background-size:800% 400%;background-position:var(--pos-x) var(--pos-y);cursor:zoom-in}
+  .contact-tile figcaption{font-size:9.5px;padding:3px 6px}
+  figcaption{padding:4px 8px;color:#5b6573;font-size:10.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .gallery.plots figcaption{color:#aeb6c2;background:#0c0f14;border-top:1px solid #1c222c}
+  .gallery.grounding figcaption{color:#aeb6c2;background:#0c0f14;border-top:1px solid #1c222c}
+  .ply-row{display:grid;grid-template-columns:minmax(240px,1.2fr) minmax(0,1fr) minmax(0,1fr);gap:var(--gap-2);align-items:stretch;--ply-row-h:176px}
+  .ply-row .ply3d{height:var(--ply-row-h)}
+  .ply-row figure{min-width:0;background:#0c0f14}
+  .ply-row figure button{height:calc(var(--ply-row-h) - 25px);display:flex;align-items:center;justify-content:center;background:#0c0f14;overflow:hidden}
+  .ply-row figure img{width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain;background:#0c0f14}
+  .ply-row figcaption{color:#aeb6c2;background:#0c0f14;border-top:1px solid #1c222c;font-size:10px}
+  .ply-row .ply-badge{top:7px;left:7px;padding:3px 7px;font-size:8.5px}
+  .ply-row .ply-hint{display:none}
+  .ply-row .ply-legend{left:7px;right:7px;bottom:7px;gap:6px;padding:3px 7px;font-size:9px}
+  .ply-row .ply-legend .lg{gap:4px}
+  .ply-row .ply-legend .lg i{width:7px;height:7px}
+
+  table{width:100%;border-collapse:collapse;margin-top:var(--gap-2);font-size:11px}
+  th,td{border:1px solid var(--line);padding:4px 7px;text-align:left;vertical-align:top}
+  th{background:var(--soft);font-weight:800;color:#374151}
+
+  /* ── Result ── */
+  .conclusion{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:130px;border:1px solid #b3dcbf;border-radius:8px;background:linear-gradient(#f0fbf3,#e9f7ee)}
+  .cn-big{font-size:46px;line-height:1;font-weight:900;color:var(--green);font-variant-numeric:tabular-nums}
+  .cn-cap{font-size:13px;font-weight:750;color:#1f5b34}
+  .cn-from{font-size:11px;font-weight:600;color:#6b8a76;margin-top:2px}
+  .final-line{display:inline-flex;align-items:center;gap:10px;border:1px solid #b7c2cf;background:#fff;border-radius:8px;padding:9px 14px;font-size:14.5px;line-height:1.3;font-weight:600;color:#1f2937}
+  .final-line b{font-weight:850;font-variant-numeric:tabular-nums;color:#0d1320}
+  .ok-tick{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--green);color:#fff;font-size:12px;font-weight:900}
+
+  details.raw{margin-top:var(--gap-2);border:1px dashed var(--line);background:var(--soft);font-size:11px;color:#4b5563;border-radius:6px}
+  details.raw summary{cursor:pointer;padding:6px 9px;font-weight:700}
+  details.raw pre{margin:0;padding:8px;border-top:1px dashed var(--line);white-space:pre-wrap;overflow-wrap:anywhere;max-height:200px;overflow:auto;font:10.5px/1.45 var(--mono)}
+  .bottom-note{padding:8px 18px;border-top:1px solid var(--line);color:#828a97;font:10.5px/1.4 var(--mono);background:#fcfdfe}
+
+  /* live PLY point-cloud viewer */
+  .ply3d{position:relative;width:100%;height:230px;border:1px solid #1d242e;border-radius:7px;overflow:hidden;background:radial-gradient(120% 90% at 50% 35%,#121823 0%,#080b10 70%,#05070a 100%);touch-action:none;cursor:grab}
+  .ply3d:active{cursor:grabbing}
+  .ply3d canvas{display:block;width:100%;height:100%}
+  .ply3d::after{content:"loading point cloud...";position:absolute;inset:0;display:grid;place-items:center;background:rgba(5,7,10,.62);font:10.5px/1 var(--mono);font-weight:700;color:#94a3b8;pointer-events:none;transition:opacity .18s ease}
+  .ply3d[data-loaded="1"]::after{opacity:0}
+  .ply3d.ply-fail::after{content:"point cloud could not load";color:#fca5a5;background:rgba(17,24,39,.74);opacity:1}
+  .ply-badge{position:absolute;top:9px;left:9px;display:inline-flex;align-items:center;gap:6px;background:rgba(8,12,18,.62);border:1px solid #2a3340;border-radius:999px;padding:3px 10px;font:9.5px/1 var(--mono);font-weight:700;letter-spacing:.03em;color:#cdd6e3;pointer-events:none}
+  .live-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;animation:livepulse 1.6s infinite}
+  @keyframes livepulse{0%{box-shadow:0 0 0 0 rgba(34,197,94,.55)}70%{box-shadow:0 0 0 6px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
+  .ply-legend{position:absolute;bottom:9px;left:9px;display:flex;gap:11px;flex-wrap:wrap;align-items:center;background:rgba(8,12,18,.62);border:1px solid #2a3340;border-radius:6px;padding:4px 10px;font-size:10.5px;font-weight:600;color:#cdd6e3;pointer-events:none}
+  .ply-legend .lg{display:inline-flex;align-items:center;gap:5px}
+  .ply-legend .lg i{width:9px;height:9px;border-radius:50%;display:inline-block;box-shadow:0 0 5px currentColor}
+  .ply-legend .lg.dist{color:#7ee2a0;font-weight:850;font-variant-numeric:tabular-nums}
+  .ply-legend .lg.dist::before{content:"";width:15px;height:2px;background:#16a34a;display:inline-block;margin-right:3px}
+  .ply-hint{position:absolute;top:9px;right:10px;font:9.5px/1 var(--mono);color:#6b7585;pointer-events:none}
+
+  #lightbox{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(8,12,18,.9);z-index:40;cursor:zoom-out;padding:22px}
+  #lightbox img{max-width:96vw;max-height:94vh;width:auto;height:auto;background:#fff;border-radius:6px}
+  #lightbox.show{display:flex}
+
+  /* S-Agent project-page theme override for embedded sessions */
+  :root{
+    --ink:#f5f7f0; --muted:rgba(245,247,240,.62); --line:rgba(204,255,160,.16);
+    --soft:rgba(255,255,255,.055); --soft2:rgba(204,255,160,.10);
+    --blue:#9fcbff; --green:#ccffa0; --amber:#ffc978; --gray:rgba(245,247,240,.5); --red:#ff9e9e;
+  }
+  html,body{min-height:100%;background:linear-gradient(180deg,#020502 0%,#050805 46%,#020502 100%);color:var(--ink)}
+  body{padding:18px}
+  a{color:var(--green)}
+  img,video{background:#020502}
+  .sheet{
+    border:1px solid var(--line);background:rgba(5,10,6,.92);border-radius:8px;
+    box-shadow:0 22px 70px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.035);
+  }
+  header{border-bottom:1px solid var(--line);background:rgba(2,5,2,.72)}
+  .brand{color:rgba(245,247,240,.54)}
+  h1.q,h1.brand-title{color:var(--ink)}
+  .qcard{border-color:var(--line);background:var(--soft);color:rgba(245,247,240,.82)}
+  .qcard .qcard-tag{color:rgba(245,247,240,.54)}
+  .verdict{border-color:rgba(204,255,160,.32);background:rgba(204,255,160,.10);color:var(--green)}
+  .verdict b,.verdict em{color:var(--green)}
+  .verdict .sep{color:rgba(245,247,240,.36)}
+  .pipeline{border-bottom:1px solid var(--line);background:rgba(0,0,0,.32)}
+  .pchip{border-color:var(--line);background:rgba(255,255,255,.045);color:rgba(245,247,240,.82)}
+  .pchip .pno{background:rgba(204,255,160,.10);color:var(--green)}
+  .pchip .pval{color:var(--ink)}
+  .pchip.warn{border-color:rgba(255,201,120,.30);background:rgba(255,201,120,.10);color:var(--amber)}
+  .pchip.good{border-color:rgba(204,255,160,.32);background:rgba(204,255,160,.10);color:var(--green)}
+  .pcon{color:rgba(245,247,240,.35)}
+  .trace{background:#000}
+  .stage{
+    border-color:var(--line);border-radius:8px;background:rgba(5,10,6,.94);
+    box-shadow:0 16px 46px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.028);
+  }
+  .stage::before{background:rgba(204,255,160,.28)}
+  .stage.input::before,.stage.merge::before,.stage.answer::before{background:var(--green)}
+  .stage.count::before,.stage.seg-warn::before{background:var(--amber)}
+  .stage.seg-ok::before{background:var(--green)}
+  .node{border-color:rgba(204,255,160,.24);background:#020502;color:var(--green)}
+  .stage.count .node{border-color:rgba(255,201,120,.30);background:rgba(255,201,120,.12);color:var(--amber)}
+  .stage.merge .node,.stage.answer .node{border-color:var(--green);background:rgba(204,255,160,.14);color:var(--green)}
+  .kicker{color:rgba(245,247,240,.54)}
+  h2{color:var(--ink)}
+  .tool,.pill{border-color:var(--line);background:var(--soft);color:rgba(245,247,240,.78)}
+  .tool.green,.pill.good{border-color:rgba(204,255,160,.32);background:rgba(204,255,160,.10);color:var(--green)}
+  .tool.amber,.pill.warn{border-color:rgba(255,201,120,.30);background:rgba(255,201,120,.10);color:var(--amber)}
+  .pill.was{opacity:.78}
+  .arr{color:rgba(245,247,240,.42)}
+  .reason{border-left-color:rgba(204,255,160,.20);color:rgba(245,247,240,.68)}
+  figure,.contact-fig{border-color:var(--line);background:#0c0f14}
+  figure img,.gallery figure img,.contact-fig img{background:#0c0f14}
+  figcaption,.contact-fig figcaption{color:rgba(245,247,240,.68);background:#0c0f14;border-top-color:#1c222c}
+  table th,table td{border-color:var(--line);color:rgba(245,247,240,.78)}
+  table th{background:rgba(255,255,255,.055);color:var(--ink)}
+  .conclusion{border-color:rgba(204,255,160,.32);background:rgba(204,255,160,.10)}
+  .cn-big,.cn-cap{color:var(--green)}
+  .cn-from{color:rgba(245,247,240,.58)}
+  .final-line{border-color:rgba(204,255,160,.26);background:rgba(255,255,255,.045);color:var(--ink)}
+  .final-line b{color:var(--green)}
+  .ok-tick{background:var(--green);color:#020502}
+  .bottom-note{border-top-color:var(--line);color:rgba(245,247,240,.50);background:rgba(2,5,2,.72)}
+
+  /* ── Compact mode = token reassignment + tighter shell ── */
+  .sheet.compact{max-width:1000px;--copy-w:212px;--fig-h:128px;--fig-strip-h:62px;--contact-h:96px;--q-size:21px;--h2-size:15px;--row-pad:9px;--rail:42px;--node:26px;--gap-3:14px}
+
+  @media (max-width:980px){
+    header{grid-template-columns:1fr}
+  }
+  @media (max-width:620px){
+    body{padding:0}
+    .sheet,.sheet.compact{border-radius:0;border-left:0;border-right:0;max-width:none}
+    :root,.sheet.compact{--fig-h:120px;--rail:36px;--node:24px;--q-size:18.5px}
+    .trace{padding:10px 11px 13px}
+    .stage{padding-right:11px;border-radius:8px}
+    .stage-content{grid-template-columns:1fr;gap:10px}
+    .copy,.visual{grid-column:1}
+    .gallery{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+    .contact-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .pipeline{padding:8px 11px;font-size:10.5px}
+    .ply-row{grid-template-columns:1fr;--ply-row-h:180px}
+    .ply3d{height:190px}
+  }
+</style>
+</head>
+<body>
+<main class="sheet" id="app"></main>
+<div id="lightbox" aria-label="image preview"><img alt=""></div>
+
+<script src="lib/three.min.js"></script>
+<script src="assets/abs_distance/3001/ply_inline_data.js"></script>
+<script src="assets/abs_distance/2534/ply_inline_data.js"></script>
+<script>
+const CASES = {
+  "422": {
+    id: "422",
+    title: "ReVSI Key Trajectory",
+    group: "counting_single",
+    compact: true,
+    question: "How many green pillows are in the scene?",
+    video: "original_videos/9071e139d9.mp4",
+    poster: "assets/counting_single/422/000_TStarKeyframeSearchTool_1781428187198_frame_00_U_3.20s.jpg",
+    gt: "3",
+    pred: "3",
+    raw: "<answer>3</answer>",
+    tags: ["Case #422"],
+    derivation: 'Three distinct green pillows &rarr; <b>3</b>',
+    stages: [
+      {
+        type: "input", no: "0", title: "Question + raw input", pipeLabel: "Input",
+        result: ["one indoor video", "1026 frames"],
+        reason: "The agent starts from the question plus one indoor video. The contact sheet shows every sampled frame; the next step picks the useful ones.",
+        visual: {
+          kind: "frames", contact: "evidence_selector_contact_sheet.jpg",
+          images: []
+        },
+        raw: "Input question and raw visual media only. No frame selection or tool evidence has happened yet."
+      },
+      {
+        type: "detect", no: "1", title: "Select key frames", pipeLabel: "Select",
+        tool: "T-Star search",
+        result: ["32 frames", "10 shown · 16T/16U"],
+        reason: "T-Star keeps frames likely to contain a green pillow plus uniform coverage — these 10 examples show the selected trajectory before any boxes are drawn.",
+        visual: {
+          kind: "contactGrid", cols: 5, contact: "evidence_selector_contact_sheet.jpg",
+          indices: [0, 1, 3, 4, 7, 13, 19, 24, 27, 30]
+        },
+        raw: "TStar selected 32 frames for target ['green pillow']: 16 target-retrieval candidates plus 16 uniform coverage frames."
+      },
+      {
+        type: "count", no: "2", title: "Coarse count", pipeLabel: "Count",
+        tool: "counting tool", toolTone: "amber",
+        result: ["2", "under-count"],
+        reason: "The counting tool tallies green pillows on the first views and reports 2 — but the room hasn't been fully covered yet.",
+        visual: {
+          kind: "gallery", cols: 4,
+          images: [
+            ["counting_expert_tool_1781428218780_e8863953_000_TStarKeyframeSearchTool_1781428187198_frame_00_U_3.20s.jpg", "count · 3.2 s"],
+            ["counting_expert_tool_1781428218780_3082a4b3_001_TStarKeyframeSearchTool_1781428187198_frame_01_T_6.00s.jpg", "count · 6.0 s"],
+            ["counting_expert_tool_1781428218780_acb3a92f_003_TStarKeyframeSearchTool_1781428187198_frame_03_U_16.00s.jpg", "count · 16.0 s"],
+            ["counting_expert_tool_1781428218780_6e0550bf_004_TStarKeyframeSearchTool_1781428187198_frame_04_U_22.40s.jpg", "count · 22.4 s"]
+          ]
+        },
+        raw: "Observation: count=2; aggregation=robust_frame_count; confidence=high."
+      },
+      {
+        type: "detect", no: "3", title: "Cross-view check", pipeLabel: "Check",
+        tool: "cross-view check",
+        result: ["+1 pillow", "later views"],
+        reason: "Checking two later views (16 s, 22 s) surfaces a green pillow the first pass missed — a third, distinct pillow.",
+        visual: {
+          kind: "gallery", cols: 4,
+          images: [
+            ["acb3a92f_003_TStarKeyframeSearchTool_1781428187198_frame_03_U_16.00s.jpg", "raw check · 16.0 s"],
+            ["counting_expert_tool_1781428218780_acb3a92f_003_TStarKeyframeSearchTool_1781428187198_frame_03_U_16.00s.jpg", "count check · 16.0 s"],
+            ["counting_expert_tool_1781428218780_6e0550bf_004_TStarKeyframeSearchTool_1781428187198_frame_04_U_22.40s.jpg", "count check · 22.4 s"],
+            ["counting_expert_tool_1781428218780_3082a4b3_001_TStarKeyframeSearchTool_1781428187198_frame_01_T_6.00s.jpg", "first-pass check · 6.0 s"]
+          ]
+        },
+        table: {
+          headers: ["View", "Green pillows", "Role"],
+          rows: [
+            ["3.2 s / 6.0 s", "2", "first pass"],
+            ["16 s / 22 s", "+1", "missed pillow"]
+          ]
+        },
+        raw: "Cross-view check after count=2: a later view reveals a third distinct pillow."
+      },
+      {
+        type: "merge", no: "4", title: "Scene-level count", pipeLabel: "Resolve",
+        tool: "consolidation", toolTone: "green",
+        result: ["3 distinct"],
+        reason: "Merging the first-pass pillows with the one found in later views gives three distinct green pillows across the scene, correcting the count of 2.",
+        visual: {
+          kind: "conclusion", value: "3", cap: "distinct green pillows", from: "counting pass said 2"
+        },
+        raw: "Reasoning summary: 3 distinct green pillows; corrected from the counting-tool draft 2 to 3."
+      }
+    ]
+  },
+  "3001": {
+    id: "3001",
+    title: "ReVSI Key Trajectory",
+    group: "abs_distance",
+    question: "Closest-point distance between the computer mouse and the smoke detector",
+    video: "original_videos/0d2ee665be.mp4",
+    poster: "assets/abs_distance/3001/012_TStarKeyframeSearchTool_1781426623411_frame_12_U_25.30s.jpg",
+    gt: "3.0 m",
+    pred: "3.09 m",
+    raw: "<answer>3.09</answer>",
+    compact: true,
+    tags: ["Case #3001"],
+    derivation: 'mouse &harr; smoke detector, measured in 3D = <b>3.09 m</b>',
+    stages: [
+      {
+        type: "input", no: "0", title: "Question + raw input", pipeLabel: "Input",
+        result: ["one indoor video", "87 s · 900 frames"],
+        reason: "All the agent gets is one indoor walking video and the question — answer in meters, measured between the two objects.",
+        visual: {
+          kind: "frames", contact: "evidence_selector_contact_sheet.jpg",
+          images: []
+        },
+        raw: "Input question and raw visual media only. No selection, grounding, or metric estimate has happened yet."
+      },
+      {
+        type: "detect", no: "1", title: "Select key frames", pipeLabel: "Select",
+        tool: "T-Star search",
+        result: ["32 frames", "10 shown · 16T/16U"],
+        reason: "Pick frames that both find the objects and cover the scene: 10 representative examples are shown from the 16 target keyframes (T) plus 16 uniform frames (U).",
+        visual: {
+          kind: "contactGrid", cols: 5, contact: "evidence_selector_contact_sheet.jpg",
+          indices: [0, 1, 2, 5, 8, 11, 12, 15, 19, 31]
+        },
+        raw: "TStar selected 32 frames: 16 target-retrieval candidates plus 16 uniform coverage frames."
+      },
+      {
+        type: "count", no: "2", title: "Initial estimate", pipeLabel: "Estimate",
+        tool: "monocular depth", toolTone: "amber",
+        result: ["≈ 1.58 m", "provisional"],
+        reason: "A quick single-frame depth estimate gives a rough baseline of ≈ 1.58 m — a provisional first draft, corrected later in 3D.",
+        visual: {
+          kind: "gallery", cols: 2, plots: true,
+          images: [
+            ["metric_measurement_expert_tool_1781426659875_metric_depth3d_tool_1781426659840_metric3d_368b20db_012_TStarKeyframeSearchTool_1781426623411_frame_12_U_25.30s_depth.png", "monocular depth map"],
+            ["metric_measurement_expert_tool_1781426659875_metric_depth3d_tool_1781426659840_metric3d_3b69619e_012_TStarKeyframeSearchTool_1781426623411_frame_12_U_25.30s_topdown_xz.png", "rough top-down"]
+          ]
+        },
+        raw: "Initial estimate: 1.5811 m; type=center_to_center_distance."
+      },
+      {
+        type: "detect", no: "3", title: "Locate both objects", pipeLabel: "Locate",
+        tool: "VLM grounding",
+        result: ["2 / 2 located", "conf 0.96 / 0.93"],
+        reason: "Box both targets in their clearest frames: smoke detector @ frame 05 (conf 0.96) and computer mouse @ frame 12 (conf 0.93).",
+	        visual: {
+	          kind: "gallery", cols: 2, className: "grounding",
+	          images: [
+	            ["vlm_ground_objects_1781426712111_vlmgnd_005_TStarKeyframeSearchTool_1781426623411_frame_05_T_7.00s.jpg", "smoke detector · frame 05"],
+	            ["vlm_ground_objects_1781426712111_vlmgnd_012_TStarKeyframeSearchTool_1781426623411_frame_12_U_25.30s.jpg", "computer mouse · frame 12"]
+          ]
+        },
+        raw: "Best frames: smoke detector f05 (conf 0.96), computer mouse f12 (conf 0.93)."
+      },
+      {
+        type: "merge", no: "4", title: "Measure in 3D", pipeLabel: "Measure",
+        tool: "Metric3D", toolTone: "green",
+        correction: ["≈ 1.58 m draft", "3.09 m"],
+        reason: "Reconstruct a metric-scale 3D point cloud and measure the true closest-point distance — correcting the 1.58 m draft to 3.09 m.",
+        visual: {
+          kind: "ply",
+          ply: "metric_depth3d_tool_1781426724530_metric3d_e27d60c4_005_TStarKeyframeSearchTool_1781426623411_frame_05_T_7.00s_pointcloud.ply",
+          dist: "3.09 m",
+          markers: [
+            { name: "computer mouse", xyz: [1.756, -0.715, 3.548], color: "#f59e0b" },
+            { name: "smoke detector", xyz: [0.573, -1.439, 0.785], color: "#38bdf8" }
+          ],
+          plots: [
+            ["metric_depth3d_tool_1781426724530_metric3d_e27d60c4_005_TStarKeyframeSearchTool_1781426623411_frame_05_T_7.00s_front_xy.png", "front projection"],
+            ["metric_depth3d_tool_1781426724530_metric3d_e27d60c4_005_TStarKeyframeSearchTool_1781426623411_frame_05_T_7.00s_topdown_xz.png", "top-down projection"]
+          ]
+        },
+        raw: "smoke detector xyz=(0.573,-1.439,0.785); computer mouse xyz=(1.756,-0.715,3.548); distance=3.0919 m."
+      }
+    ]
+  },
+  "2534": {
+    id: "2534",
+    title: "ReVSI Key Trajectory",
+    group: "abs_distance",
+    question: "Closest-point distance between the laptop and the desktop printer",
+    video: "original_videos/47115543.mp4",
+    poster: "assets/abs_distance/2534/015_TStarKeyframeSearchTool_1781426728522_frame_15_U_28.60s.jpg",
+    gt: "3.4 m",
+    pred: "3.33 m",
+    raw: "<answer>3.3252</answer>",
+    compact: true,
+    tags: ["Case #2534"],
+    derivation: 'laptop &harr; desktop printer, measured in 3D = <b>3.33 m</b>',
+    stages: [
+      {
+        type: "input", no: "0", title: "Question + raw input", pipeLabel: "Input",
+        result: ["one indoor video", "705 frames"],
+        reason: "All the agent gets is one indoor walking video and the question — answer in meters, measured between the two objects.",
+        visual: {
+          kind: "frames", contact: "evidence_selector_contact_sheet.jpg",
+          images: []
+        },
+        raw: "Input question and raw visual media only. No selection, grounding, or metric estimate has happened yet."
+      },
+      {
+        type: "detect", no: "1", title: "Select key frames", pipeLabel: "Select",
+        tool: "T-Star search",
+        result: ["32 frames", "10 shown · 16T/16U"],
+        reason: "Pick frames that both find the objects and cover the scene: 10 representative examples are shown from target keyframes (T) plus uniform frames (U).",
+        visual: {
+          kind: "contactGrid", cols: 5, contact: "evidence_selector_contact_sheet.jpg",
+          indices: [0, 4, 8, 12, 15, 20, 22, 24, 27, 31]
+        },
+        raw: "TStar selected 32 frames: 16 target-retrieval candidates plus 16 uniform coverage frames."
+      },
+      {
+        type: "count", no: "2", title: "Initial estimate", pipeLabel: "Estimate",
+        tool: "metric probe", toolTone: "amber",
+        result: ["≈ 3.48 m", "center-to-center"],
+        reason: "A quick center-to-center probe gives a rough 3.48 m — a provisional draft, refined once each object is grounded in 3D.",
+        visual: {
+          kind: "gallery", cols: 2, plots: true,
+          images: [
+            ["metric_measurement_expert_tool_1781426764142_metric_depth3d_tool_1781426764106_metric3d_a160330b_015_TStarKeyframeSearchTool_1781426728522_frame_15_U_28.60s_depth.png", "depth estimate"],
+            ["metric_measurement_expert_tool_1781426764142_metric_depth3d_tool_1781426764106_metric3d_5447309b_015_TStarKeyframeSearchTool_1781426728522_frame_15_U_28.60s_topdown_xz.png", "rough top-down"]
+          ]
+        },
+        raw: "center_to_center_distance=3.48 m; confidence=high."
+      },
+      {
+        type: "detect", no: "3", title: "Locate both objects", pipeLabel: "Locate",
+        tool: "VLM grounding",
+        result: ["2 / 2 located", "conf 0.96 / 0.99"],
+        reason: "Box both targets in their clearest frames: laptop @ frame 15 (vlm 0.96) and desktop printer @ frame 22 (vlm 0.99).",
+	        visual: {
+	          kind: "gallery", cols: 2, className: "grounding",
+	          images: [
+	            ["vlm_ground_objects_1781426816413_vlmgnd_015_TStarKeyframeSearchTool_1781426728522_frame_15_U_28.60s.jpg", "laptop · frame 15"],
+	            ["vlm_ground_objects_1781426816413_vlmgnd_022_TStarKeyframeSearchTool_1781426728522_frame_22_T_48.00s.jpg", "desktop printer · frame 22"]
+          ]
+        },
+        raw: "laptop BEST at frame 15 (vlm 0.96); desktop printer BEST at frame 22 (vlm 0.99)."
+      },
+      {
+        type: "merge", no: "4", title: "Measure in 3D", pipeLabel: "Measure",
+        tool: "Metric3D", toolTone: "green",
+        correction: ["≈ 3.48 m draft", "3.33 m"],
+        reason: "Reconstruct a metric-scale 3D point cloud and measure the true closest-point distance — refining the 3.48 m draft to 3.33 m.",
+        visual: {
+          kind: "ply",
+          ply: "metric_depth3d_tool_1781426842683_metric3d_8515d837_015_TStarKeyframeSearchTool_1781426728522_frame_15_U_28.60s_pointcloud.ply",
+          dist: "3.33 m",
+          markers: [
+            { name: "laptop", xyz: [-3.000, 0.323, 1.280], color: "#f59e0b" },
+            { name: "desktop printer", xyz: [0.316, 0.313, 1.036], color: "#38bdf8" }
+          ],
+          plots: [
+            ["metric_depth3d_tool_1781426842683_metric3d_8515d837_015_TStarKeyframeSearchTool_1781426728522_frame_15_U_28.60s_front_xy.png", "front projection"],
+            ["metric_depth3d_tool_1781426842683_metric3d_8515d837_015_TStarKeyframeSearchTool_1781426728522_frame_15_U_28.60s_topdown_xz.png", "top-down projection"]
+          ]
+        },
+        raw: "laptop xyz=(-3.000,0.323,1.280); desktop printer xyz=(0.316,0.313,1.036); distance=3.3252 m."
+      }
+    ]
+  },
+  "383": {
+    id: "383",
+    title: "ReVSI Key Trajectory",
+    group: "counting_single",
+    compact: true,
+    question: "How many monitors are in the scene?",
+    video: "original_videos/3f15a9266d.mp4",
+    poster: "assets/counting_single/383/000_TStarKeyframeSearchTool_1781428139454_frame_00_T_0.00s.jpg",
+    gt: "2",
+    pred: "2",
+    raw: "<answer>2</answer>",
+    tags: ["Case #383"],
+    derivation: 'Two distinct monitors &rarr; <b>2</b>',
+    stages: [
+      {
+        type: "input", no: "0", title: "Question + raw input", pipeLabel: "Input",
+        result: ["one indoor video", "563 frames"],
+        reason: "The agent starts from the question plus one indoor video. The contact sheet shows every sampled frame; the next step picks the useful ones.",
+        visual: {
+          kind: "frames", contact: "evidence_selector_contact_sheet.jpg",
+          images: []
+        },
+        raw: "Input question and raw visual media only. No frame selection or tool evidence has happened yet."
+      },
+      {
+        type: "detect", no: "1", title: "Select key frames", pipeLabel: "Select",
+        tool: "T-Star search",
+        result: ["32 frames", "10 shown · 16T/16U"],
+        reason: "T-Star keeps the frames most likely to contain a monitor plus uniform coverage — these 10 examples are clean selected keyframes, no boxes yet.",
+        visual: {
+          kind: "contactGrid", cols: 5, contact: "evidence_selector_contact_sheet.jpg",
+          indices: [0, 1, 3, 7, 12, 18, 22, 24, 25, 31]
+        },
+        raw: "TStar selected 32 frames for target ['monitor']: 16 target-retrieval candidates plus 16 uniform coverage frames."
+      },
+      {
+        type: "count", no: "2", title: "Coarse count", pipeLabel: "Count",
+        tool: "counting tool", toolTone: "amber",
+        result: ["1", "under-count"],
+        reason: "A single robust pass reads only 1 — most frames show no monitor, so the rough count is unreliable.",
+        visual: {
+          kind: "gallery", cols: 4,
+          images: [
+            ["counting_expert_tool_1781428165474_5754b9e1_000_TStarKeyframeSearchTool_1781428139454_frame_00_T_0.00s.jpg", "count · 0.0 s"],
+            ["counting_expert_tool_1781428165474_7385c2a1_000_TStarKeyframeSearchTool_1781428139454_frame_00_T_0.00s.jpg", "count alt · 0.0 s"],
+            ["counting_expert_tool_1781428165474_03a9eade_001_TStarKeyframeSearchTool_1781428139454_frame_01_U_1.70s.jpg", "count · 1.7 s"],
+            ["counting_expert_tool_1781428165474_32265dd2_001_TStarKeyframeSearchTool_1781428139454_frame_01_U_1.70s.jpg", "count alt · 1.7 s"]
+          ]
+        },
+        raw: "count=1; aggregation=robust_frame_count; partial_visibility=some_frames_zero."
+      },
+      {
+        type: "detect", no: "3", title: "Detect in key view", pipeLabel: "Detect",
+        tool: "object detector",
+        result: ["2 found", "frame 24"],
+        reason: "Because the count looked low, the detector runs on the clearest wide view (39 s) and boxes both monitors; a neighbouring frame is a negative cross-check.",
+        visual: {
+          kind: "gallery", cols: 4,
+          images: [
+            ["detect_objects_tool_1781428176573_3918b65f_024_TStarKeyframeSearchTool_1781428139454_frame_24_T_39.00s.jpg", "detector · 39.0 s"],
+            ["3918b65f_024_TStarKeyframeSearchTool_1781428139454_frame_24_T_39.00s.jpg", "raw · 39.0 s"],
+            ["detect_objects_tool_1781428176586_1e0368d4_025_TStarKeyframeSearchTool_1781428139454_frame_25_T_40.00s.jpg", "negative detector · 40.0 s"],
+            ["1e0368d4_025_TStarKeyframeSearchTool_1781428139454_frame_25_T_40.00s.jpg", "raw negative · 40.0 s"]
+          ]
+        },
+        table: {
+          headers: ["View", "Monitors", "Role"],
+          rows: [
+            ["wide · 39 s", "2", "main evidence"],
+            ["narrow · 40 s", "0", "cross-check"]
+          ]
+        },
+        raw: "f24 found 2; f25 found 0."
+      },
+      {
+        type: "merge", no: "4", title: "Scene-level count", pipeLabel: "Resolve",
+        tool: "consolidation", toolTone: "green",
+        result: ["2 distinct"],
+        reason: "The detector's boxes confirm two distinct monitors in the scene — correcting the counting tool's under-count of 1.",
+        visual: {
+          kind: "conclusion", value: "2", cap: "distinct monitors", from: "counting pass said 1"
+        },
+        raw: "Scene-level count = 2 distinct monitors."
+      }
+    ]
+  },
+  "467": {
+    id: "467",
+    title: "ReVSI Key Trajectory",
+    group: "counting_single",
+    compact: true,
+    question: "How many monitors are in the scene?",
+    video: "original_videos/d755b3d9d8.mp4",
+    poster: "assets/counting_single/467/000_TStarKeyframeSearchTool_1781427935422_frame_00_U_4.60s.jpg",
+    gt: "3",
+    pred: "3",
+    raw: "<answer>3</answer>",
+    tags: ["Case #467"],
+    derivation: 'Three distinct monitors &rarr; <b>3</b>',
+    stages: [
+      {
+        type: "input", no: "0", title: "Question + raw input", pipeLabel: "Input",
+        result: ["one indoor video", "1478 frames"],
+        reason: "The agent starts from the question plus one indoor video. The contact sheet shows every sampled frame; the next step picks the useful ones.",
+        visual: {
+          kind: "frames", contact: "evidence_selector_contact_sheet.jpg",
+          images: []
+        },
+        raw: "Input question and raw visual media only. No frame selection or tool evidence has happened yet."
+      },
+      {
+        type: "detect", no: "1", title: "Select key frames", pipeLabel: "Select",
+        tool: "T-Star search",
+        result: ["32 frames", "10 shown · 16T/16U"],
+        reason: "T-Star keeps the frames most likely to contain a monitor plus uniform coverage — these 10 examples are clean selected keyframes, no boxes yet.",
+        visual: {
+          kind: "contactGrid", cols: 5, contact: "evidence_selector_contact_sheet.jpg",
+          indices: [0, 1, 5, 8, 13, 16, 17, 22, 27, 31]
+        },
+        raw: "TStar selected 32 frames for target ['monitor']: 16 target-retrieval candidates plus 16 uniform coverage frames."
+      },
+      {
+        type: "count", no: "2", title: "Coarse count", pipeLabel: "Count",
+        tool: "counting tool", toolTone: "amber",
+        result: ["1", "under-count"],
+        reason: "A single robust pass reads only 1 — the monitors are spread across the room, so no single frame sees them all.",
+        visual: {
+          kind: "gallery", cols: 4,
+          images: [
+            ["counting_expert_tool_1781427968727_79999a84_000_TStarKeyframeSearchTool_1781427935422_frame_00_U_4.60s.jpg", "count · 4.6 s"],
+            ["counting_expert_tool_1781427968727_9b4b53de_000_TStarKeyframeSearchTool_1781427935422_frame_00_U_4.60s.jpg", "count alt · 4.6 s"],
+            ["counting_expert_tool_1781427968727_b7ce36b5_001_TStarKeyframeSearchTool_1781427935422_frame_01_U_13.80s.jpg", "count · 13.8 s"],
+            ["counting_expert_tool_1781427968727_ce956513_001_TStarKeyframeSearchTool_1781427935422_frame_01_U_13.80s.jpg", "count alt · 13.8 s"]
+          ]
+        },
+        raw: "count=1; aggregation=robust_frame_count; partial_visibility=some_frames_zero."
+      },
+      {
+        type: "detect", no: "3", title: "Detect in key views", pipeLabel: "Detect",
+        tool: "object detector",
+        result: ["1 + 2 found", "two views"],
+        reason: "Because the count looked low, the detector runs on two clear views: one monitor at 72 s and two different monitors at 81 s.",
+        visual: {
+          kind: "gallery", cols: 4,
+          images: [
+            ["detect_objects_tool_1781428020777_8154dd5b_013_TStarKeyframeSearchTool_1781427935422_frame_13_T_72.00s.jpg", "detector · 72.0 s"],
+            ["8154dd5b_013_TStarKeyframeSearchTool_1781427935422_frame_13_T_72.00s.jpg", "raw · 72.0 s"],
+            ["detect_objects_tool_1781428020797_cba349c2_017_TStarKeyframeSearchTool_1781427935422_frame_17_T_81.00s.jpg", "detector · 81.0 s"],
+            ["cba349c2_017_TStarKeyframeSearchTool_1781427935422_frame_17_T_81.00s.jpg", "raw · 81.0 s"]
+          ]
+        },
+        table: {
+          headers: ["View", "Monitors", "Role"],
+          rows: [
+            ["72 s", "1", "first monitor"],
+            ["81 s", "2", "two more"]
+          ]
+        },
+        raw: "f13 found 1; f17 found 2."
+      },
+      {
+        type: "merge", no: "4", title: "Scene-level count", pipeLabel: "Resolve",
+        tool: "consolidation", toolTone: "green",
+        result: ["3 distinct"],
+        reason: "The monitor at 72 s and the two at 81 s are different units, so the scene holds 3 distinct monitors — correcting the counting tool's under-count of 1.",
+        visual: {
+          kind: "conclusion", value: "3", cap: "distinct monitors", from: "counting pass said 1"
+        },
+        raw: "f13 found 1; f17 found 2; merged = 3 distinct."
+      }
+    ]
+  }
+};
+
+const params = new URLSearchParams(location.search);
+const requested = params.get("case") || "3001";
+const caseKey = requested === "distance" ? "3001" : requested;
+const current = CASES[caseKey] || CASES["422"];
+
+function esc(s){
+  return String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+}
+
+function asset(c, file){
+  const path = String(file || "");
+  if(/^(?:https?:|data:|blob:|assets\/|runs\/|original_videos\/|\/)/.test(path)) return path;
+  return `assets/${c.group}/${c.id}/${path}`;
+}
+
+function imageFigure(c, item){
+  const [file, label] = item;
+  const src = asset(c, file);
+  return `<figure>
+    <button type="button" class="zoomable" data-src="${esc(src)}" aria-label="Open ${esc(label)}">
+      <img loading="lazy" src="${esc(src)}" alt="${esc(label)}">
+    </button>
+    <figcaption title="${esc(label)}">${esc(label)}</figcaption>
+  </figure>`;
+}
+
+function renderVisual(c, visual){
+  if(!visual) return "";
+  if(visual.kind === "conclusion"){
+    return `<div class="conclusion"><div class="cn-big">${esc(visual.value)}</div><div class="cn-cap">${esc(visual.cap || "")}</div>${visual.from ? `<div class="cn-from">${esc(visual.from)}</div>` : ""}</div>`;
+  }
+  if(visual.kind === "contactGrid"){
+    const cols = visual.cols || 8;
+    const sourceCols = visual.sourceCols || 8;
+    const sourceRows = visual.sourceRows || 4;
+    const indices = visual.indices || Array.from({ length: visual.count || 10 }, (_, i) => i);
+    const sheet = asset(c, visual.contact || "evidence_selector_contact_sheet.jpg");
+    const tiles = indices.map((frameIndex, tileIndex) => {
+      const x = frameIndex % sourceCols;
+      const y = Math.floor(frameIndex / sourceCols);
+      const posX = sourceCols > 1 ? `${(x / (sourceCols - 1)) * 100}%` : "0%";
+      const posY = sourceRows > 1 ? `${(y / (sourceRows - 1)) * 100}%` : "0%";
+      const label = visual.labels && visual.labels[tileIndex] ? visual.labels[tileIndex] : `frame ${String(frameIndex + 1).padStart(2, "0")}`;
+      const bgSize = `${sourceCols * 100}% ${sourceRows * 100}%`;
+      return `<figure class="contact-tile">
+        <button type="button" class="zoomable" data-src="${esc(sheet)}" aria-label="Open ${esc(label)} in contact sheet" style="--sheet-img:url('${esc(sheet)}');--pos-x:${posX};--pos-y:${posY};background-size:${bgSize}"></button>
+      </figure>`;
+    }).join("");
+    return `<div class="contact-grid" style="--cols:${cols}" aria-label="${esc(indices.length)} representative selected frames">${tiles}</div>`;
+  }
+  if(visual.kind === "frames"){
+    const videoTile = `<figure>
+      <video class="vid" src="${esc(c.video)}" poster="${esc(c.poster)}" controls muted playsinline preload="metadata"></video>
+      <figcaption>source video</figcaption>
+    </figure>`;
+    const contactFig = visual.contact ? `<figure class="contact-fig">
+      <button type="button" class="zoomable" data-src="${esc(asset(c, visual.contact))}" aria-label="Open all 32 sampled frames">
+        <img loading="lazy" src="${esc(asset(c, visual.contact))}" alt="all 32 sampled frames">
+      </button>
+      <figcaption>all 32 sampled frames — click to zoom</figcaption>
+    </figure>` : "";
+    const imgItems = visual.images || [];
+    if(!imgItems.length){
+      return `<div class="raw-input">${videoTile}${contactFig}</div>`;
+    }
+    const cols = visual.cols || 3;
+    const imgs = imgItems.map(item => imageFigure(c, item)).join("");
+    const contactRow = contactFig ? `<div class="contact-row">${contactFig}</div>` : "";
+    return `<div class="gallery cols-${cols}">${videoTile}${imgs}</div>${contactRow}`;
+  }
+  if(visual.kind === "ply"){
+    const markers = visual.markers || [];
+    const legend = markers.map(m => `<span class="lg"><i style="background:${esc(m.color)};color:${esc(m.color)}"></i>${esc(m.name)}</span>`).join("")
+      + (visual.dist ? `<span class="lg dist">${esc(visual.dist)}</span>` : "");
+    const sec = (visual.plots || []).map(item => imageFigure(c, item)).join("");
+    return `<div class="${sec ? "ply-row" : ""}">
+      <div class="ply3d" data-ply="${esc(asset(c, visual.ply))}" data-markers="${esc(JSON.stringify(markers))}">
+        <canvas></canvas>
+        <div class="ply-badge"><span class="live-dot"></span>LIVE 3D · point cloud</div>
+        <div class="ply-hint">drag to rotate · scroll to zoom</div>
+        <div class="ply-legend">${legend}</div>
+      </div>
+      ${sec}
+    </div>`;
+  }
+  const cols = visual.cols || 2;
+  const plots = visual.plots ? " plots" : "";
+  const extra = visual.className ? " " + visual.className : "";
+  const contact = visual.contact ? `<figure class="contact-fig"><button type="button" class="zoomable" data-src="${esc(asset(c, visual.contact))}" aria-label="Open all 32 sampled frames"><img loading="lazy" src="${esc(asset(c, visual.contact))}" alt="all 32 sampled frames"></button><figcaption>all 32 sampled frames — click to zoom</figcaption></figure>` : "";
+  const grid = (visual.images && visual.images.length) ? `<div class="gallery cols-${cols}${plots}${extra}">${visual.images.map(item => imageFigure(c, item)).join("")}</div>` : "";
+  return `${contact}${contact && grid ? '<div class="contact-row"></div>' : ""}${grid}`;
+}
+
+function nodeGlyph(s){
+  if(s.type === "answer"){
+    return `<svg class="node-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>`;
+  }
+  if(s.type === "input"){
+    return `<svg class="node-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><polygon points="7 4 20 12 7 20 7 4"></polygon></svg>`;
+  }
+  return `<span class="node-no">${esc(s.no)}</span>`;
+}
+
+function renderStage(c, s){
+  const seg = s.toolTone === "amber" ? " seg-warn" : s.toolTone === "green" ? " seg-ok" : "";
+  const tool = s.tool ? `<span class="tool ${esc(s.toolTone || "")}">${esc(s.tool)}</span>` : "";
+  let key = "";
+  if(s.correction){
+    key = `<span class="correction"><span class="pill warn was">${esc(s.correction[0])}</span><span class="arr">&rarr;</span><span class="pill good"><b>${esc(s.correction[1])}</b></span></span>`;
+  } else if(s.result && s.result.length){
+    const tone = s.type === "merge" ? " good" : s.type === "count" ? " warn" : "";
+    const extra = s.result[1] ? ` <span class="pq">${esc(s.result[1])}</span>` : "";
+    key = `<span class="pill${tone}"><b>${esc(s.result[0])}</b>${extra}</span>`;
+  }
+  const reasonText = s.reason ? s.reason.replace(/^Reasoning trace:\s*/i, "") : "";
+  const reason = reasonText && s.type !== "input" ? `<p class="reason">${esc(reasonText)}</p>` : "";
+  const table = s.table ? `<table>
+    <thead><tr>${s.table.headers.map(h => `<th>${esc(h)}</th>`).join("")}</tr></thead>
+    <tbody>${s.table.rows.map(row => `<tr>${row.map(cell => `<td>${esc(cell)}</td>`).join("")}</tr>`).join("")}</tbody>
+  </table>` : "";
+  const raw = s.raw && !c.compact ? `<details class="raw"><summary>raw trace</summary><pre>${esc(s.raw)}</pre></details>` : "";
+  return `<article class="stage ${esc(s.type)}${seg}">
+    <div class="rail"><div class="node" aria-hidden="true">${nodeGlyph(s)}</div></div>
+    <div class="stage-content">
+      <aside class="copy">
+        <div class="kicker">${s.type === "input" ? "Input" : `Step ${esc(s.no)}`}</div>
+        <h2>${esc(s.title)}</h2>
+        ${s.type === "input" ? `<div class="qcard"><span class="qcard-tag">Question</span>${esc(c.question)}</div>` : ""}
+        <div class="step-head">${tool}${key}</div>
+        ${reason}
+      </aside>
+      <section class="visual">${renderVisual(c, s.visual)}${table}${raw}</section>
+    </div>
+  </article>`;
+}
+
+function renderFinal(c){
+  const deriv = c.derivation || `<b>${esc(c.pred)}</b>`;
+  return `<article class="stage answer seg-ok">
+    <div class="rail"><div class="node answer" aria-hidden="true">${nodeGlyph({type:"answer"})}</div></div>
+    <div class="stage-content">
+      <aside class="copy">
+        <div class="kicker">Result</div>
+        <h2>Answer</h2>
+      </aside>
+      <section class="visual"><div class="final-line">${deriv}<span class="ok-tick" aria-label="correct">&#10003;</span></div></section>
+    </div>
+  </article>`;
+}
+
+function renderPipeline(c){
+  const steps = c.stages.filter(s => s.type !== "input" && s.type !== "answer");
+  const con = `<li class="pcon" aria-hidden="true">&rarr;</li>`;
+  const chips = steps.map((s, i) => {
+    const tone = s.toolTone === "amber" ? " warn" : s.toolTone === "green" ? " good" : "";
+    const raw = s.correction ? s.correction[1] : (s.result && s.result[0]) ? s.result[0] : "";
+    const val = raw ? `<span class="pval">${esc(raw)}</span>` : "";
+    return `<li class="pchip${tone}"><span class="pno">${i + 1}</span><span>${esc(s.pipeLabel || s.title)}</span>${val}</li>`;
+  });
+  return `<ol class="pipeline" aria-label="method overview">${chips.join(con)}</ol>`;
+}
+
+function initPly(el){
+  if(typeof THREE === "undefined") return;
+  const url = el.dataset.ply;
+  let markers = [];
+  try { markers = JSON.parse(el.dataset.markers || "[]"); } catch(e){ markers = []; }
+  const canvas = el.querySelector("canvas");
+  if(!canvas){ el.classList.add("ply-fail"); return; }
+  let renderer;
+  try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, preserveDrawingBuffer: true }); }
+  catch(err){ el.classList.add("ply-fail"); return; }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(50, 1, 0.01, 5000);
+  const group = new THREE.Group();
+  scene.add(group);
+  const target = new THREE.Vector3();
+  let scale = 1, ready = false, frames = 0;
+
+  loadPlyText(url).then(({ text: txt, source }) => {
+    if(!txt || !txt.includes("end_header")) throw new Error("Invalid PLY data");
+    el.dataset.source = source;
+    const hi = txt.indexOf("end_header");
+    const rows = txt.slice(txt.indexOf("\n", hi) + 1).split("\n");
+    const pts = [];
+    for(let i = 0; i < rows.length; i++){
+      const r = rows[i].trim();
+      if(!r) continue;
+      const p = r.split(/\s+/);
+      if(p.length < 3) continue;
+      pts.push(p);
+    }
+    const n = pts.length;
+    const pos = new Float32Array(n * 3), col = new Float32Array(n * 3);
+    let mnx = Infinity, mny = Infinity, mnz = Infinity, mxx = -Infinity, mxy = -Infinity, mxz = -Infinity;
+    for(let i = 0; i < n; i++){
+      const p = pts[i];
+      const x = +p[0], y = +p[1], z = +p[2];
+      pos[i*3] = x; pos[i*3+1] = y; pos[i*3+2] = z;
+      col[i*3] = (+p[3] || 0) / 255; col[i*3+1] = (+p[4] || 0) / 255; col[i*3+2] = (+p[5] || 0) / 255;
+      if(x<mnx)mnx=x; if(y<mny)mny=y; if(z<mnz)mnz=z;
+      if(x>mxx)mxx=x; if(y>mxy)mxy=y; if(z>mxz)mxz=z;
+    }
+    // center + scene scale: prefer the measured segment so framing is stable against outliers
+    const mk = markers.map(m => new THREE.Vector3(m.xyz[0], m.xyz[1], m.xyz[2]));
+    if(mk.length === 2){
+      target.copy(mk[0]).add(mk[1]).multiplyScalar(0.5);
+      scale = mk[0].distanceTo(mk[1]);
+    } else {
+      target.set((mnx+mxx)/2, (mny+mxy)/2, (mnz+mxz)/2);
+      scale = Math.max(mxx-mnx, mxy-mny, mxz-mnz) || 1;
+    }
+    for(let i = 0; i < n; i++){ pos[i*3]-=target.x; pos[i*3+1]-=target.y; pos[i*3+2]-=target.z; }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+    geo.setAttribute("color", new THREE.BufferAttribute(col, 3));
+    group.add(new THREE.Points(geo, new THREE.PointsMaterial({ size: scale*0.005, sizeAttenuation: true, vertexColors: true })));
+    // object markers + measured segment
+    const ends = [];
+    mk.forEach((v, i) => {
+      const c2 = new THREE.Vector3().subVectors(v, target);
+      ends.push(c2);
+      const color = (markers[i] && markers[i].color) || "#ffffff";
+      const dot = new THREE.Mesh(new THREE.SphereGeometry(scale*0.03, 20, 20), new THREE.MeshBasicMaterial({ color, depthTest: false }));
+      dot.position.copy(c2); dot.renderOrder = 11; group.add(dot);
+      const halo = new THREE.Mesh(new THREE.SphereGeometry(scale*0.055, 20, 20), new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.22, depthTest: false }));
+      halo.position.copy(c2); halo.renderOrder = 10; group.add(halo);
+    });
+    if(ends.length === 2){
+      const dir = new THREE.Vector3().subVectors(ends[1], ends[0]);
+      const rod = new THREE.Mesh(new THREE.CylinderGeometry(scale*0.007, scale*0.007, dir.length(), 12), new THREE.MeshBasicMaterial({ color: 0x22c55e, depthTest: false }));
+      rod.position.copy(ends[0]).add(ends[1]).multiplyScalar(0.5);
+      rod.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.clone().normalize());
+      rod.renderOrder = 9; group.add(rod);
+    }
+    camera.position.set(0, scale*0.3, scale*2.2);
+    camera.lookAt(0, 0, 0);
+    ready = true;
+    el.dataset.loaded = "1";
+    draw(); // explicit first paint — does not depend on requestAnimationFrame
+    setTimeout(draw, 80); setTimeout(draw, 300); setTimeout(draw, 900); // re-fit once layout settles
+  }).catch(err => {
+    el.dataset.error = err && err.message ? err.message : "Point cloud failed to load";
+    el.classList.add("ply-fail");
+  });
+
+  let rotX = 0.18, rotY = -0.5, dragging = false, lx = 0, ly = 0, auto = true;
+  canvas.addEventListener("pointerdown", e => { dragging = true; auto = false; lx = e.clientX; ly = e.clientY; try{ canvas.setPointerCapture(e.pointerId); }catch(_){} });
+  canvas.addEventListener("pointerup", () => { dragging = false; });
+  canvas.addEventListener("pointermove", e => {
+    if(!dragging) return;
+    rotY += (e.clientX - lx) * 0.008; rotX += (e.clientY - ly) * 0.008;
+    rotX = Math.max(-1.45, Math.min(1.45, rotX));
+    lx = e.clientX; ly = e.clientY; draw();
+  });
+  canvas.addEventListener("wheel", e => {
+    e.preventDefault();
+    camera.position.multiplyScalar(1 + (e.deltaY > 0 ? 0.12 : -0.12)); draw();
+  }, { passive: false });
+
+  function resize(){
+    const w = el.clientWidth, h = el.clientHeight;
+    if(w < 2 || h < 2) return false;
+    const dpr = renderer.getPixelRatio();
+    if(canvas.width !== Math.round(w*dpr) || canvas.height !== Math.round(h*dpr)){
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h; camera.updateProjectionMatrix();
+    }
+    return true;
+  }
+  function draw(){
+    if(!resize()) return; // no size yet (post-navigation collapse) — try again next tick
+    group.rotation.set(rotX, rotY, 0);
+    renderer.render(scene, camera);
+    frames++; el.dataset.frames = String(frames);
+  }
+  window.addEventListener("resize", draw);
+  if(window.ResizeObserver) new ResizeObserver(draw).observe(el);
+
+  function loop(){
+    requestAnimationFrame(loop);
+    if(ready && auto) rotY += 0.0024;
+    draw();
+  }
+  loop();
+}
+
+function loadPlyText(url){
+  const inline = window.REVSI_PLY_DATA && window.REVSI_PLY_DATA[url];
+  if(inline) return Promise.resolve({ text: inline, source: "inline" });
+  return fetch(url).then(r => {
+    if(!r.ok && r.status !== 0) throw new Error(`PLY request failed: ${r.status}`);
+    return r.text();
+  }).then(text => ({ text, source: "fetch" }));
+}
+
+function render(c){
+  document.title = `S-Agent Trajectory · ReVSI #${c.id}`;
+  document.getElementById("app").className = `sheet${c.compact ? " compact" : ""}`;
+  document.getElementById("app").innerHTML = `
+    <header>
+      <div class="head-main">
+        <div class="brand">S-Agent trajectory</div>
+        <h1 class="brand-title">ReVSI Case #${esc(c.id)}</h1>
+        <div class="verdict">Predicted <b>${esc(c.pred)}</b><span class="sep">·</span>GT ${esc(c.gt)}<em>&#10003; correct</em></div>
+      </div>
+    </header>
+    ${renderPipeline(c)}
+    <section class="trace" aria-label="ReVSI reasoning trace">
+      ${c.stages.map(s => renderStage(c, s)).join("")}
+      ${renderFinal(c)}
+    </section>
+    <div class="bottom-note">One action + its evidence per step · MRA 1.0 = prediction within tolerance of ground truth</div>
+  `;
+}
+
+render(current);
+document.querySelectorAll(".ply3d").forEach(initPly);
+
+document.addEventListener("click", event => {
+  const btn = event.target.closest(".zoomable");
+  if(!btn) return;
+  const box = document.getElementById("lightbox");
+  const img = box.querySelector("img");
+  img.src = btn.dataset.src;
+  box.classList.add("show");
+});
+
+document.getElementById("lightbox").addEventListener("click", event => {
+  event.currentTarget.classList.remove("show");
+  event.currentTarget.querySelector("img").removeAttribute("src");
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>S-Agent — Demo Reel</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta http-equiv="Cache-Control" content="no-cache" />
+<!--
+  S-Agent ~34s demo reel (v2). Leans on styles.css for brand tokens + te*/traj* motion.
+  4 acts: title -> hero primer (one case) -> 13-case PARALLEL mini-pipeline wall -> outro.
+  Autoplays on load unless ?auto=0 (clean offline capture). Hooks: window.startReel(),
+  window.seekReel(t), window.__REEL_DURATION.
+-->
+<link rel="stylesheet" href="styles.css" />
+<style>
+  html,body{margin:0;padding:0}
+  body{width:1920px;height:1080px;overflow:hidden;background:#020502;color:var(--ink);font-family:var(--font-sans)}
+  .reel-stage{position:relative;width:1920px;height:1080px;overflow:hidden}
+  .reel-bg{position:absolute;inset:0;z-index:0}
+
+  .reel-act{position:absolute;inset:0;z-index:1;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden}
+  .reel-act.is-live{opacity:1;visibility:visible}
+
+  #reel-scan{position:absolute;inset:0;z-index:40;pointer-events:none;opacity:0;
+    background:linear-gradient(105deg,transparent 0 44%,rgba(204,255,160,.16) 50%,transparent 56% 100%);mix-blend-mode:screen}
+  #reel-scan.go{animation:reelScan .62s cubic-bezier(.4,0,.2,1)}
+  @keyframes reelScan{0%{opacity:1;transform:translateX(-60%)}100%{opacity:0;transform:translateX(60%)}}
+
+  #act-title .title-wrap{display:flex;flex-direction:column;align-items:center;text-align:center}
+  .reel-logo-lockup .title-eye{height:260px;width:auto}
+  .reel-wordmark{display:flex;align-items:baseline;font-family:var(--font-sans);font-weight:900;font-size:140px;line-height:.9;letter-spacing:-.03em;color:var(--ink);margin-top:.1em}
+  .reel-wordmark .wm-letter{display:inline-block;transform:translateY(118%) skewY(7deg);opacity:0;will-change:transform}
+  .reel-wordmark .wm-tail{color:var(--accent)}
+  #act-title.is-live .wm-letter{animation:reelLetterRise .82s cubic-bezier(.2,1.25,.28,1) both}
+  #act-title.is-live .wm-letter.l0{animation-delay:.42s}
+  #act-title.is-live .wm-letter.l1{animation-delay:.50s}
+  #act-title.is-live .wm-letter.l2{animation-delay:.57s}
+  #act-title.is-live .wm-letter.l3{animation-delay:.64s}
+  #act-title.is-live .wm-letter.l4{animation-delay:.71s}
+  #act-title.is-live .wm-letter.l5{animation-delay:.78s}
+  #act-title.is-live .wm-letter.l6{animation-delay:.85s}
+  @keyframes reelLetterRise{0%{transform:translateY(118%) skewY(7deg);opacity:0}62%{transform:translateY(-7%) skewY(0);opacity:1}100%{transform:translateY(0);opacity:1}}
+  .reel-tagline-clip{overflow:hidden;margin-top:.5rem}
+  .reel-tagline{font-family:var(--font-mono);font-weight:600;font-size:32px;letter-spacing:.04em;color:var(--ink-2);transform:translateY(110%);opacity:0}
+  .reel-tagline .accent{color:var(--accent-ink)}
+  #act-title.is-live .reel-tagline{animation:reelTagReveal .9s cubic-bezier(.2,1.1,.28,1) 1.0s both}
+  @keyframes reelTagReveal{0%{transform:translateY(110%);opacity:0}70%{transform:translateY(-4%);opacity:1}100%{transform:translateY(0);opacity:1}}
+
+  #act-hero{flex-direction:column;gap:18px}
+  #act-hero .hero-kicker{font-family:var(--font-mono);font-size:18px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--accent-ink);opacity:.92}
+  #heroMount{width:1180px;height:646px}
+
+  #act-wall{flex-direction:column;gap:16px;align-content:center}
+  .wall-head{display:flex;align-items:center;gap:16px;font-family:var(--font-mono)}
+  .wall-head .we{display:inline-flex;align-items:center;gap:10px;font-size:22px;font-weight:850;letter-spacing:.10em;text-transform:uppercase;color:var(--ink)}
+  .wall-head .we b{color:var(--accent-ink)}
+  .wall-head .we .t{color:var(--teal)}
+  .wall-head .wn{font-size:14px;color:var(--muted);letter-spacing:.10em}
+  .wall-grid{display:flex;flex-wrap:wrap;justify-content:center;align-content:center;gap:14px;width:1800px}
+
+  .tile{position:relative;display:flex;flex-direction:column;width:344px;height:286px;border-radius:9px;overflow:hidden;
+    border:1px solid rgba(204,255,160,.20);background:linear-gradient(160deg,rgba(10,18,9,.96),rgba(3,6,4,.985));
+    box-shadow:0 18px 48px -28px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.04)}
+  .tile.mmsi{border-color:rgba(141,243,223,.24)}
+  .tile.enter{animation:reelTileLand .56s cubic-bezier(.2,.9,.2,1) both}
+  @keyframes reelTileLand{0%{opacity:0;transform:translateY(20px) scale(.95)}100%{opacity:1;transform:none}}
+  .tile::after{content:"";position:absolute;left:0;right:0;top:0;height:1px;z-index:5;background:linear-gradient(90deg,transparent,var(--accent),var(--teal),transparent);opacity:.7}
+  .tile-top{display:flex;align-items:center;gap:7px;padding:7px 9px;border-bottom:1px solid rgba(204,255,160,.14);font:700 10px/1 var(--font-mono);letter-spacing:.05em;text-transform:uppercase}
+  .tile-bm{padding:3px 6px;border-radius:5px;background:var(--accent);color:#020502;font-weight:900;font-size:9.5px}
+  .tile.mmsi .tile-bm{background:var(--teal)}
+  .tile-id{color:var(--ink)}
+  .tile-cat{margin-left:auto;color:var(--accent-ink)}
+  .tile.mmsi .tile-cat{color:var(--teal)}
+  .tile-view{position:relative;flex:1;min-height:0;background:#05080a;overflow:hidden}
+  .tile-view img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+  .tile-view img.show{animation:reelStepReveal .5s cubic-bezier(.2,.8,.2,1) both}
+  @keyframes reelStepReveal{0%{opacity:0;clip-path:inset(0 100% 0 0)}100%{opacity:1;clip-path:inset(0 0 0 0)}}
+  .tile-step{position:absolute;left:0;right:0;bottom:0;display:flex;align-items:center;gap:6px;padding:6px 8px;background:linear-gradient(0deg,rgba(0,0,0,.86),transparent);font:800 10.5px/1.1 var(--font-mono);z-index:3}
+  .tile-step .sn{flex:0 0 auto;width:15px;height:15px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:#020502;font-size:9px;font-weight:900}
+  .tile.mmsi .tile-step .sn{background:var(--teal)}
+  .tile-step .sl{color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tile-step .sv{margin-left:auto;color:var(--accent-ink);background:rgba(204,255,160,.10);padding:2px 7px;border-radius:5px;white-space:nowrap}
+  .tile.mmsi .tile-step .sv{color:var(--teal);background:rgba(141,243,223,.10)}
+  .tile-q{padding:5px 9px 3px;font:600 10.5px/1.25 var(--font-sans);color:var(--ink-2);height:30px;overflow:hidden}
+  .tile-dots{display:flex;gap:5px;align-items:center;padding:0 9px 8px}
+  .tile-dot{width:6px;height:6px;border-radius:50%;background:#23301f;border:1px solid rgba(204,255,160,.25)}
+  .tile-dot.done{background:var(--accent);border-color:var(--accent)}
+  .tile-dot.cur{background:#fff;border-color:#fff;box-shadow:0 0 8px rgba(255,255,255,.8);transform:scale(1.25)}
+  .tile.mmsi .tile-dot.done{background:var(--teal);border-color:var(--teal)}
+  .tile-answer{position:absolute;inset:0;z-index:4;display:none;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;
+    background:radial-gradient(circle at 50% 38%,rgba(204,255,160,.16),rgba(3,6,4,.97) 70%)}
+  .tile.mmsi .tile-answer{background:radial-gradient(circle at 50% 38%,rgba(141,243,223,.16),rgba(3,6,4,.97) 70%)}
+  .tile.show-answer .tile-answer{display:flex;animation:reelAnsPop .56s cubic-bezier(.16,1.3,.3,1) both}
+  .tile.show-answer .tile-view img,.tile.show-answer .tile-step{opacity:0}
+  @keyframes reelAnsPop{0%{opacity:0;transform:scale(.7)}70%{opacity:1;transform:scale(1.05)}100%{transform:scale(1)}}
+  .tile-ans{font:900 34px/1 var(--font-mono);letter-spacing:-.02em;color:var(--accent);text-shadow:0 0 30px rgba(204,255,160,.3)}
+  .tile.mmsi .tile-ans{color:var(--teal);text-shadow:0 0 30px rgba(141,243,223,.3)}
+  .tile-aq{padding:0 18px;font:600 11px/1.3 var(--font-sans);color:var(--ink-2);max-width:90%}
+  .tile-ver{display:flex;align-items:center;gap:8px;font:800 11px/1 var(--font-mono);color:var(--muted)}
+  .tile-ver b{color:var(--ink)}
+  .tile-ok{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:rgba(141,243,223,.16);border:1px solid var(--teal);color:var(--teal);font-weight:900}
+
+  #heroMount .tile{width:1180px;height:646px;border-radius:14px}
+  #heroMount .tile-top{padding:14px 20px;font-size:16px;gap:12px}
+  #heroMount .tile-bm{font-size:14px;padding:5px 10px;border-radius:7px}
+  #heroMount .tile-step{padding:14px 20px;font-size:18px;gap:12px}
+  #heroMount .tile-step .sn{width:26px;height:26px;font-size:14px}
+  #heroMount .tile-step .sv{padding:5px 12px;border-radius:7px}
+  #heroMount .tile-q{font-size:17px;height:auto;padding:12px 20px 6px}
+  #heroMount .tile-dots{padding:0 20px 16px;gap:9px}
+  #heroMount .tile-dot{width:10px;height:10px}
+  #heroMount .tile-ans{font-size:96px}
+  #heroMount .tile-aq{font-size:18px}
+  #heroMount .tile-ver{font-size:18px}
+  #heroMount .tile-ok{width:30px;height:30px;font-size:16px}
+
+  #act-outro .outro-wrap{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px}
+  #act-outro .title-eye{height:210px}
+  #act-outro .o-line{font-family:var(--font-mono);font-weight:850;font-size:30px;letter-spacing:.08em;color:var(--ink)}
+  #act-outro .o-line b{color:var(--accent-ink)}
+  #act-outro .o-line .t{color:var(--teal)}
+  #act-outro .o-aff{font-family:var(--font-mono);font-size:16px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+  #act-outro.is-live .outro-wrap{animation:reelTagReveal .7s cubic-bezier(.2,.9,.2,1) both}
+</style>
+</head>
+<body>
+<div class="reel-stage" id="stage">
+  <div class="reel-bg traj-embed-bg" aria-hidden="true"><span></span><span></span></div>
+
+  <section class="reel-act" id="act-title">
+    <div class="title-wrap">
+      <div class="reel-logo-lockup" id="titleLogo"></div>
+      <div class="reel-wordmark" aria-label="S-Agent">
+        <span class="wm-letter l0">S</span><span class="wm-letter l1 wm-tail">-</span><span class="wm-letter l2 wm-tail">A</span><span class="wm-letter l3 wm-tail">g</span><span class="wm-letter l4 wm-tail">e</span><span class="wm-letter l5 wm-tail">n</span><span class="wm-letter l6 wm-tail">t</span>
+      </div>
+      <div class="reel-tagline-clip"><div class="reel-tagline">Spatial tool-use <span class="accent">elicits reasoning</span> for spatial intelligence</div></div>
+    </div>
+  </section>
+
+  <section class="reel-act" id="act-hero">
+    <div class="hero-kicker" id="heroKicker">One agent · one full trajectory</div>
+    <div id="heroMount"></div>
+  </section>
+
+  <section class="reel-act" id="act-wall">
+    <div class="wall-head">
+      <span class="we"><b>ReVSI</b> + <span class="t">MMSI</span> · 13 cases run in parallel</span>
+      <span class="wn" id="wallNote">every case · full tool-use trajectory · zero-shot</span>
+    </div>
+    <div class="wall-grid" id="wallGrid"></div>
+  </section>
+
+  <section class="reel-act" id="act-outro">
+    <div class="outro-wrap">
+      <div class="reel-logo-lockup" id="outroLogo"></div>
+      <div class="o-line"><b>ReVSI</b> + <span class="t">MMSI</span> · 13 / 13 correct · zero-shot spatial reasoning</div>
+      <div class="o-aff">NTU · THU · ByteDance · NWPU · Ropedia</div>
+    </div>
+  </section>
+
+  <div id="reel-scan"></div>
+</div>
+<script src="reel_tiles.js"></script>
+<script src="reel.js"></script>
+</body>
+</html>
