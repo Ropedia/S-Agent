@@ -38,6 +38,63 @@ function copyBib(){
   var det = wrap ? wrap.closest('details') : null;
   if(det){ det.addEventListener('toggle', function(){ if(det.open) fill(); }); }
 
+  /* ---------- performance dashboard: animated bars + counters ---------- */
+  var perfDashboard = document.getElementById('perfDashboard');
+  var perfStarted = false;
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function clamp(n, lo, hi){ return Math.max(lo, Math.min(hi, n)); }
+
+  function animateNumber(el, target){
+    if(!el) return;
+    if(reduceMotion){
+      el.textContent = target.toFixed(1);
+      return;
+    }
+    var start = window.performance && window.performance.now ? window.performance.now() : Date.now();
+    var dur = 980;
+    function tick(now){
+      var t = clamp(((now || Date.now()) - start) / dur, 0, 1);
+      var eased = 1 - Math.pow(1 - t, 3);
+      el.textContent = (target * eased).toFixed(1);
+      if(t < 1) requestAnimationFrame(tick);
+      else el.textContent = target.toFixed(1);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  function revealPerformanceDashboard(){
+    if(!perfDashboard || perfStarted) return;
+    perfStarted = true;
+    perfDashboard.querySelectorAll('.perf-chart').forEach(function(chart){
+      var min = parseFloat(chart.dataset.min);
+      var max = parseFloat(chart.dataset.max);
+      if(!isFinite(min)) min = 0;
+      if(!isFinite(max) || max <= min) max = 100;
+      chart.querySelectorAll('.perf-bar').forEach(function(bar){
+        var value = parseFloat(bar.dataset.value) || 0;
+        var pct = clamp(((value - min) / (max - min)) * 100, 0, 100);
+        bar.style.setProperty('--bar-height', Math.max(5, pct).toFixed(2) + '%');
+        animateNumber(bar.querySelector('.perf-value'), value);
+      });
+    });
+    perfDashboard.classList.add('is-visible');
+  }
+
+  if(perfDashboard && 'IntersectionObserver' in window){
+    var perfIo = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          revealPerformanceDashboard();
+          perfIo.disconnect();
+        }
+      });
+    }, { threshold: 0.02 });
+    perfIo.observe(perfDashboard);
+  } else {
+    revealPerformanceDashboard();
+  }
+
   /* ---------- placeholder links (arXiv / Code not yet public) ---------- */
   document.querySelectorAll('a[data-placeholder]').forEach(function(a){
     a.addEventListener('click', function(e){
@@ -271,7 +328,13 @@ function copyBib(){
     trajEmbed.appendChild(loader);
     trajEmbed.appendChild(frame);
     trajFrameLoadTimer = setTimeout(markFrameLoaded, 900);
-    frame.src = href;
+    var frameSrc = href;
+    try{
+      var frameUrl = new URL(href, window.location.href);
+      frameUrl.searchParams.set('embed', '1');
+      frameSrc = frameUrl.href;
+    }catch(e){}
+    frame.src = frameSrc;
 
     trajModal.classList.add('is-open');
     trajModal.setAttribute('aria-hidden', 'false');

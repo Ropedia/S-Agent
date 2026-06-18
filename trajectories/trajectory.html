@@ -282,7 +282,7 @@ const CASES = {
     gt: "3",
     pred: "3",
     raw: "<answer>3</answer>",
-    tags: ["Case #422"],
+    tags: ["Counting"],
     derivation: 'Three distinct green pillows &rarr; <b>3</b>',
     stages: [
       {
@@ -368,7 +368,7 @@ const CASES = {
     pred: "3.09 m",
     raw: "<answer>3.09</answer>",
     compact: true,
-    tags: ["Case #3001"],
+    tags: ["Distance"],
     derivation: 'mouse &harr; smoke detector, measured in 3D = <b>3.09 m</b>',
     stages: [
       {
@@ -453,7 +453,7 @@ const CASES = {
     pred: "3.33 m",
     raw: "<answer>3.3252</answer>",
     compact: true,
-    tags: ["Case #2534"],
+    tags: ["Distance"],
     derivation: 'laptop &harr; desktop printer, measured in 3D = <b>3.33 m</b>',
     stages: [
       {
@@ -538,7 +538,7 @@ const CASES = {
     gt: "2",
     pred: "2",
     raw: "<answer>2</answer>",
-    tags: ["Case #383"],
+    tags: ["Counting"],
     derivation: 'Two distinct monitors &rarr; <b>2</b>',
     stages: [
       {
@@ -624,7 +624,7 @@ const CASES = {
     gt: "3",
     pred: "3",
     raw: "<answer>3</answer>",
-    tags: ["Case #467"],
+    tags: ["Counting"],
     derivation: 'Three distinct monitors &rarr; <b>3</b>',
     stages: [
       {
@@ -999,13 +999,13 @@ function loadPlyText(url){
 }
 
 function render(c){
-  document.title = `S-Agent Trajectory · ReVSI #${c.id}`;
+  document.title = "S-Agent Trajectory · ReVSI";
   document.getElementById("app").className = `sheet${c.compact ? " compact" : ""}`;
   document.getElementById("app").innerHTML = `
     <header>
       <div class="head-main">
         <div class="brand">S-Agent trajectory</div>
-        <h1 class="brand-title">ReVSI Case #${esc(c.id)}</h1>
+        <h1 class="brand-title">ReVSI Reasoning Trajectory</h1>
         <div class="verdict">Predicted <b>${esc(c.pred)}</b><span class="sep">·</span>GT ${esc(c.gt)}<em>&#10003; correct</em></div>
       </div>
     </header>

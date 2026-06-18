@@ -25,35 +25,39 @@
     <div class="hero-grid">
       <div class="hero-left">
         <h1 class="hero-title">
-          <span class="nm"><svg class="title-eye anim" viewBox="56 50 210 232" role="img" aria-label="S-Agent logo">
+          <span class="nm"><svg class="title-eye logo-s-cube anim" viewBox="54 42 255 236" role="img" aria-label="S-Agent logo">
             <defs>
-              <linearGradient id="logoRail" x1="86" y1="76" x2="244" y2="246" gradientUnits="userSpaceOnUse">
-                <stop stop-color="#CCFFA0"/><stop offset="0.5" stop-color="#6CBF43"/><stop offset="1" stop-color="#4F8F35"/>
+              <linearGradient id="logoSRibbon" x1="88" y1="58" x2="244" y2="256" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#8DF3DF"/><stop offset="0.42" stop-color="#CCFFA0"/><stop offset="0.68" stop-color="#6CBF43"/><stop offset="1" stop-color="#2F8F5A"/>
               </linearGradient>
-              <radialGradient id="logoBeacon" cx="50%" cy="50%" r="58%">
-                <stop stop-color="#F4FFF0"/><stop offset="0.46" stop-color="#8DF3DF"/><stop offset="1" stop-color="#6CBF43"/>
+              <linearGradient id="logoSEdge" x1="82" y1="66" x2="225" y2="232" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#F4FFF0"/><stop offset="0.44" stop-color="#CCFFA0"/><stop offset="1" stop-color="#8DF3DF"/>
+              </linearGradient>
+              <radialGradient id="logoSGlow" cx="52%" cy="48%" r="62%">
+                <stop stop-color="#CCFFA0" stop-opacity="0.46"/><stop offset="0.58" stop-color="#65DB85" stop-opacity="0.18"/><stop offset="1" stop-color="#020502" stop-opacity="0"/>
               </radialGradient>
             </defs>
-            <ellipse class="field" cx="166" cy="164" rx="94" ry="114"/>
-            <path class="orbit o1" d="M84 118C119 78 185 72 234 107"/>
-            <path class="orbit o2" d="M75 202C118 238 190 241 247 206"/>
-            <path class="mesh" d="M101 107L224 78L240 214L90 242L161 157L101 107M161 157L224 78M161 157L240 214"/>
-            <path class="axis" d="M91 176H247M166 72V258"/>
-            <path class="back" d="M224 78C169 46 91 63 85 113C78 173 239 151 241 214C243 266 157 274 90 242"/>
-            <path class="rail" d="M224 78C169 46 91 63 85 113C78 173 239 151 241 214C243 266 157 274 90 242" stroke="url(#logoRail)"/>
-            <path class="shine" d="M224 78C169 46 91 63 85 113C78 173 239 151 241 214C243 266 157 274 90 242"/>
-            <path class="depth" d="M224 78l13 16M101 107l13 16M161 157l13 16M240 214l13 16M90 242l13 16"/>
-            <circle class="spark" r="3.6"><animateMotion dur="5.4s" repeatCount="indefinite" path="M224 78C169 46 91 63 85 113C78 173 239 151 241 214C243 266 157 274 90 242"/></circle>
-            <circle class="spark" r="2.6" opacity="0.7"><animateMotion dur="5.4s" begin="1.9s" repeatCount="indefinite" path="M224 78C169 46 91 63 85 113C78 173 239 151 241 214C243 266 157 274 90 242"/></circle>
-            <g class="beacon" transform="translate(161 157)">
-              <circle class="beacon-ring" r="24"/>
-              <circle class="beacon-core" r="8" fill="url(#logoBeacon)"/>
+            <ellipse class="s-halo" cx="166" cy="164" rx="108" ry="118" fill="url(#logoSGlow)"/>
+            <path class="s-depth" d="M224 78C169 46 91 63 85 113C78 173 239 151 241 214C243 266 157 274 90 242"/>
+            <path class="s-ribbon" d="M224 78C169 46 91 63 85 113C78 173 239 151 241 214C243 266 157 274 90 242" stroke="url(#logoSRibbon)"/>
+            <path class="s-edge s-edge-top" d="M224 78C169 46 91 63 85 113C78 173 239 151 241 214C243 266 157 274 90 242" stroke="url(#logoSEdge)"/>
+            <path class="s-edge s-edge-bottom" d="M224 78C169 46 91 63 85 113C78 173 239 151 241 214C243 266 157 274 90 242" stroke="url(#logoSEdge)"/>
+            <path class="s-shine" d="M224 78C169 46 91 63 85 113C78 173 239 151 241 214C243 266 157 274 90 242"/>
+            <path class="s-cut" d="M183 165L217 149L197 179Z"/>
+            <g class="logo-cubes" aria-hidden="true">
+              <g transform="translate(226 58) scale(.78)"><g class="cube c1"><path class="cube-top" d="M2 0L11 -5L21 -2L12 3Z"/><path class="cube-side" d="M12 3L21 -2L21 10L12 16Z"/><path class="cube-front" d="M2 0L12 3L12 16L2 12Z"/></g></g>
+              <g transform="translate(248 48) scale(.56)"><g class="cube c2"><path class="cube-top" d="M2 0L11 -5L21 -2L12 3Z"/><path class="cube-side" d="M12 3L21 -2L21 10L12 16Z"/><path class="cube-front" d="M2 0L12 3L12 16L2 12Z"/></g></g>
+              <g transform="translate(270 62) scale(.68)"><g class="cube c3"><path class="cube-top" d="M2 0L11 -5L21 -2L12 3Z"/><path class="cube-side" d="M12 3L21 -2L21 10L12 16Z"/><path class="cube-front" d="M2 0L12 3L12 16L2 12Z"/></g></g>
+              <g transform="translate(241 78) scale(.48)"><g class="cube c4"><path class="cube-top" d="M2 0L11 -5L21 -2L12 3Z"/><path class="cube-side" d="M12 3L21 -2L21 10L12 16Z"/><path class="cube-front" d="M2 0L12 3L12 16L2 12Z"/></g></g>
+              <g transform="translate(286 82) scale(.48)"><g class="cube c5"><path class="cube-top" d="M2 0L11 -5L21 -2L12 3Z"/><path class="cube-side" d="M12 3L21 -2L21 10L12 16Z"/><path class="cube-front" d="M2 0L12 3L12 16L2 12Z"/></g></g>
+              <g transform="translate(260 96) scale(.42)"><g class="cube c6"><path class="cube-top" d="M2 0L11 -5L21 -2L12 3Z"/><path class="cube-side" d="M12 3L21 -2L21 10L12 16Z"/><path class="cube-front" d="M2 0L12 3L12 16L2 12Z"/></g></g>
+              <g transform="translate(292 50) scale(.42)"><g class="cube c7"><path class="cube-top" d="M2 0L11 -5L21 -2L12 3Z"/><path class="cube-side" d="M12 3L21 -2L21 10L12 16Z"/><path class="cube-front" d="M2 0L12 3L12 16L2 12Z"/></g></g>
+              <g transform="translate(231 98) scale(.34)"><g class="cube c8"><path class="cube-top" d="M2 0L11 -5L21 -2L12 3Z"/><path class="cube-side" d="M12 3L21 -2L21 10L12 16Z"/><path class="cube-front" d="M2 0L12 3L12 16L2 12Z"/></g></g>
+              <g transform="translate(256 72) scale(.38)"><g class="cube c9"><path class="cube-top" d="M2 0L11 -5L21 -2L12 3Z"/><path class="cube-side" d="M12 3L21 -2L21 10L12 16Z"/><path class="cube-front" d="M2 0L12 3L12 16L2 12Z"/></g></g>
+              <g transform="translate(279 43) scale(.34)"><g class="cube c10"><path class="cube-top" d="M2 0L11 -5L21 -2L12 3Z"/><path class="cube-side" d="M12 3L21 -2L21 10L12 16Z"/><path class="cube-front" d="M2 0L12 3L12 16L2 12Z"/></g></g>
+              <g transform="translate(302 72) scale(.34)"><g class="cube c11"><path class="cube-top" d="M2 0L11 -5L21 -2L12 3Z"/><path class="cube-side" d="M12 3L21 -2L21 10L12 16Z"/><path class="cube-front" d="M2 0L12 3L12 16L2 12Z"/></g></g>
+              <g transform="translate(249 112) scale(.3)"><g class="cube c12"><path class="cube-top" d="M2 0L11 -5L21 -2L12 3Z"/><path class="cube-side" d="M12 3L21 -2L21 10L12 16Z"/><path class="cube-front" d="M2 0L12 3L12 16L2 12Z"/></g></g>
             </g>
-            <g class="node n1" transform="translate(224 78)"><circle class="ring" r="14"/><circle class="dot" r="13"/></g>
-            <g class="node n2" transform="translate(101 107)"><circle class="ring" r="14"/><circle class="dot" r="13"/></g>
-            <g class="node n3" transform="translate(161 157)"><circle class="ring" r="14"/><circle class="dot" r="13"/></g>
-            <g class="node n4" transform="translate(240 214)"><circle class="ring" r="14"/><circle class="dot" r="13"/></g>
-            <g class="node n5" transform="translate(90 242)"><circle class="ring" r="14"/><circle class="dot" r="13"/></g>
           </svg><span class="tail">-Agent</span></span>
           <span class="rest">Spatial tool-use elicits reasoning for spatial intelligence.</span>
         </h1>
@@ -158,35 +162,168 @@
   </div>
 </header>
 
-<!-- ============================ 01 · THE PROBLEM ============================ -->
-<section class="section bg">
+<!-- ============================ 01 · PERFORMANCE DASHBOARD ============================ -->
+<section class="section bg performance-section" id="performance-dashboard">
   <div class="wrap">
-    <div class="kicker"><span class="kn">01</span><span>The problem</span></div>
+    <div class="kicker"><span class="kn">01</span><span>Performance Dashboard</span></div>
     <div class="sec-head split">
-      <h2 class="sec-title">Why the action interface <em>matters</em>.</h2>
-      <p class="sec-lede">The real 3D world is hidden, evolving, and continuously projected into streams of 2D observations. Reasoning from isolated views cannot maintain persistent state across viewpoints and time.</p>
+      <h2 class="sec-title">Direct benchmark <em>performance</em> comparison.</h2>
+      <p class="sec-lede">A compact view of the paper tables: bars grow on entry, values count up, and S-Agent stays highlighted against the strongest baselines.</p>
     </div>
 
-    <div class="figure lit">
-      <img src="assets/teaser.png" alt="Overview of S-Agent: a VLM semantic planner orchestrates a hierarchy of spatial tools and a dual-memory system over continuous multi-view and video input." />
-    </div>
-    <p class="figcap"><strong>Overview of S-Agent.</strong> A VLM semantic planner drives a hierarchy of spatial tools to ground, lift, and aggregate geometric cues, alongside a dual-memory system that maintains the evolving scene and reasoning history.</p>
+    <div class="perf-dashboard" id="perfDashboard">
+      <div class="perf-suite perf-suite-zero">
+        <div class="perf-suite-head">
+          <div>
+            <span class="perf-suite-kicker">Zero-Shot Results</span>
+            <h3>S-Agent leads the broad zero-shot picture.</h3>
+          </div>
+          <p>Table 1, 2, and 6 show S-Agent first on MMSI-Bench and ViewSpatial-Bench, with a 56.1 ReVSI average.</p>
+        </div>
+        <div class="perf-legend" aria-label="Zero-shot model legend">
+          <span><i class="perf-logo logo-sagent" aria-hidden="true"></i>S-Agent</span>
+          <span><i class="perf-logo logo-gemini" aria-hidden="true"></i>Gemini 3 Pro</span>
+          <span><i class="perf-logo logo-openai" aria-hidden="true"></i>GPT-5.x</span>
+          <span><i class="perf-logo logo-vst" aria-hidden="true"></i>VST-3B / 7B</span>
+          <span><i class="perf-logo logo-internvl" aria-hidden="true"></i>InternVL3.5-38B</span>
+          <span><i class="perf-logo logo-qwen" aria-hidden="true"></i>Qwen3-VL / SN-SI</span>
+          <span><i class="perf-logo logo-vlm3r" aria-hidden="true"></i>VLM3R-7B</span>
+          <span><i class="perf-logo logo-seed" aria-hidden="true"></i>Seed 1.6</span>
+        </div>
 
-    <div class="iface-grid">
-      <div class="iface">
-        <span class="tag">(a) Single-pass VLM</span>
-        <h3>Answer from one impression</h3>
-        <p>One forward pass cannot re-detect when grounding fails, recover metric scale that was never observed, or attend to a frame that was not pre-selected. Reasoning collapses to the apparent 2D layout.</p>
+        <div class="perf-chart-grid zero-shot" aria-label="Zero-shot benchmark bar charts">
+          <article class="perf-chart" data-min="30" data-max="48" aria-label="Zero-shot MMSI-Bench accuracy comparison">
+            <div class="perf-chart-head"><h4>MMSI-Bench</h4><span>Accuracy (%)</span></div>
+            <div class="perf-bars">
+              <div class="perf-scale" aria-hidden="true"><span>45</span><span>40</span><span>35</span><span>30</span></div>
+              <div class="perf-bar is-ours" data-value="46.4" style="--bar-color:var(--teal);--bar-color-2:var(--accent);--delay:.04s" title="S-Agent: 46.4">
+                <span class="perf-value" data-target="46.4">0.0</span><span class="perf-column"><i class="perf-logo logo-sagent" aria-hidden="true"></i></span><span class="perf-name">S-Agent</span>
+              </div>
+              <div class="perf-bar" data-value="45.2" style="--bar-color:var(--blue);--bar-color-2:#e8f3ff;--delay:.10s" title="Gemini 3 Pro: 45.2">
+                <span class="perf-value" data-target="45.2">0.0</span><span class="perf-column"><i class="perf-logo logo-gemini" aria-hidden="true"></i></span><span class="perf-name">Gemini</span>
+              </div>
+              <div class="perf-bar" data-value="41.9" style="--bar-color:rgba(245,247,240,.40);--bar-color-2:rgba(245,247,240,.88);--delay:.16s" title="GPT-5.4: 41.9">
+                <span class="perf-value" data-target="41.9">0.0</span><span class="perf-column"><i class="perf-logo logo-openai" aria-hidden="true"></i></span><span class="perf-name">GPT-5.4</span>
+              </div>
+              <div class="perf-bar" data-value="38.5" style="--bar-color:rgba(204,255,160,.28);--bar-color-2:rgba(245,247,240,.68);--delay:.22s" title="Seed 1.6: 38.5">
+                <span class="perf-value" data-target="38.5">0.0</span><span class="perf-column"><i class="perf-logo logo-seed" aria-hidden="true"></i></span><span class="perf-name">Seed</span>
+              </div>
+              <div class="perf-bar" data-value="32.5" style="--bar-color:#b891ff;--bar-color-2:var(--magenta);--delay:.28s" title="VST-7B-SFT: 32.5">
+                <span class="perf-value" data-target="32.5">0.0</span><span class="perf-column"><i class="perf-logo logo-vst" aria-hidden="true"></i></span><span class="perf-name">VST-7B</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="perf-chart" data-min="49" data-max="57" aria-label="Zero-shot ReVSI accuracy comparison">
+            <div class="perf-chart-head"><h4>ReVSI</h4><span>Accuracy (%)</span></div>
+            <div class="perf-bars">
+              <div class="perf-scale" aria-hidden="true"><span>56</span><span>54</span><span>52</span><span>50</span></div>
+              <div class="perf-bar is-ours" data-value="56.1" style="--bar-color:var(--teal);--bar-color-2:var(--accent);--delay:.04s" title="S-Agent: 56.1">
+                <span class="perf-value" data-target="56.1">0.0</span><span class="perf-column"><i class="perf-logo logo-sagent" aria-hidden="true"></i></span><span class="perf-name">S-Agent</span>
+              </div>
+              <div class="perf-bar" data-value="54.1" style="--bar-color:#9bbcff;--bar-color-2:#edf6ff;--delay:.10s" title="InternVL3.5-38B: 54.1">
+                <span class="perf-value" data-target="54.1">0.0</span><span class="perf-column"><i class="perf-logo logo-internvl" aria-hidden="true"></i></span><span class="perf-name">InternVL</span>
+              </div>
+              <div class="perf-bar" data-value="53.3" style="--bar-color:#8f7cff;--bar-color-2:#cabdff;--delay:.16s" title="Qwen3-VL-32B-Instruct: 53.3">
+                <span class="perf-value" data-target="53.3">0.0</span><span class="perf-column"><i class="perf-logo logo-qwen" aria-hidden="true"></i></span><span class="perf-name">Qwen32B</span>
+              </div>
+              <div class="perf-bar" data-value="50.9" style="--bar-color:rgba(245,247,240,.40);--bar-color-2:rgba(245,247,240,.88);--delay:.22s" title="GPT-5.2: 50.9">
+                <span class="perf-value" data-target="50.9">0.0</span><span class="perf-column"><i class="perf-logo logo-openai" aria-hidden="true"></i></span><span class="perf-name">GPT-5.2</span>
+              </div>
+              <div class="perf-bar" data-value="50.1" style="--bar-color:rgba(255,201,120,.34);--bar-color-2:rgba(255,201,120,.82);--delay:.28s" title="VLM3R-7B: 50.1">
+                <span class="perf-value" data-target="50.1">0.0</span><span class="perf-column"><i class="perf-logo logo-vlm3r" aria-hidden="true"></i></span><span class="perf-name">VLM3R</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="perf-chart" data-min="44" data-max="62" aria-label="Zero-shot ViewSpatial-Bench accuracy comparison">
+            <div class="perf-chart-head"><h4>ViewSpatial-Bench</h4><span>Accuracy (%)</span></div>
+            <div class="perf-bars">
+              <div class="perf-scale" aria-hidden="true"><span>60</span><span>55</span><span>50</span><span>45</span></div>
+              <div class="perf-bar is-ours" data-value="60.0" style="--bar-color:var(--teal);--bar-color-2:var(--accent);--delay:.04s" title="S-Agent: 60.0">
+                <span class="perf-value" data-target="60.0">0.0</span><span class="perf-column"><i class="perf-logo logo-sagent" aria-hidden="true"></i></span><span class="perf-name">S-Agent</span>
+              </div>
+              <div class="perf-bar" data-value="52.9" style="--bar-color:#b891ff;--bar-color-2:var(--magenta);--delay:.10s" title="VST-3B-SFT: 52.9">
+                <span class="perf-value" data-target="52.9">0.0</span><span class="perf-column"><i class="perf-logo logo-vst" aria-hidden="true"></i></span><span class="perf-name">VST-3B</span>
+              </div>
+              <div class="perf-bar" data-value="51.2" style="--bar-color:#8f7cff;--bar-color-2:#cabdff;--delay:.16s" title="SN-SI-1.1-Qwen3VL-8B: 51.2">
+                <span class="perf-value" data-target="51.2">0.0</span><span class="perf-column"><i class="perf-logo logo-qwen" aria-hidden="true"></i></span><span class="perf-name">SN-SI</span>
+              </div>
+              <div class="perf-bar" data-value="50.5" style="--bar-color:#a877ff;--bar-color-2:#eadcff;--delay:.22s" title="VST-7B-SFT: 50.5">
+                <span class="perf-value" data-target="50.5">0.0</span><span class="perf-column"><i class="perf-logo logo-vst" aria-hidden="true"></i></span><span class="perf-name">VST-7B</span>
+              </div>
+              <div class="perf-bar" data-value="50.4" style="--bar-color:var(--blue);--bar-color-2:#edf6ff;--delay:.28s" title="Gemini 3 Pro: 50.4">
+                <span class="perf-value" data-target="50.4">0.0</span><span class="perf-column"><i class="perf-logo logo-gemini" aria-hidden="true"></i></span><span class="perf-name">Gemini</span>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div class="perf-result-strip">
+          <span>Zero-Shot Results</span>
+          <p>S-Agent +1.2 on MMSI-Bench<br>vs Gemini 3 Pro.</p>
+        </div>
       </div>
-      <div class="iface">
-        <span class="tag">(b) Static tool-use agents</span>
-        <h3>Isolated, stateless calls</h3>
-        <p>Prior spatial agents (VADAR, SpaceTools, GCA) augment VLMs with programs and geometry, but target single images and treat each tool call as an isolated action — no persistent scene state across views and time.</p>
-      </div>
-      <div class="iface ours">
-        <span class="tag">(c) S-Agent</span>
-        <h3>Accumulate, persist, reason</h3>
-        <p>Each evidence request is conditioned on the question <em>and</em> the evolving memory. Perception and geometry are invoked on demand, and their outputs remain reusable across later reasoning steps.</p>
+
+      <div class="perf-suite perf-suite-sft">
+        <div class="perf-suite-head">
+          <div>
+            <span class="perf-suite-kicker">SFT Results</span>
+            <h3>S-Agent-8B lifts Qwen3-VL-8B.</h3>
+          </div>
+          <p>Table 3 shows +10.5 on MMSI-Bench and +4.6 on ViewSpatial-Bench over the base Qwen3-VL-8B.</p>
+        </div>
+        <div class="perf-legend" aria-label="SFT model legend">
+          <span><i class="perf-logo logo-sagent" aria-hidden="true"></i>S-Agent-8B</span>
+          <span><i class="perf-logo logo-sagent" aria-hidden="true"></i>S-Agent (Qwen3-VL)</span>
+          <span><i class="perf-logo logo-openai" aria-hidden="true"></i>GPT-5.4</span>
+          <span><i class="perf-logo logo-qwen" aria-hidden="true"></i>Qwen3-VL-8B</span>
+        </div>
+
+        <div class="perf-chart-grid sft" aria-label="SFT benchmark bar charts">
+          <article class="perf-chart" data-min="30" data-max="43" aria-label="SFT MMSI-Bench accuracy comparison">
+            <div class="perf-chart-head"><h4>MMSI-Bench</h4><span>Accuracy (%)</span></div>
+            <div class="perf-bars">
+              <div class="perf-scale" aria-hidden="true"><span>42</span><span>38</span><span>34</span><span>30</span></div>
+              <div class="perf-bar" data-value="41.9" style="--bar-color:rgba(245,247,240,.40);--bar-color-2:rgba(245,247,240,.88);--delay:.04s" title="GPT-5.4: 41.9">
+                <span class="perf-value" data-target="41.9">0.0</span><span class="perf-column"><i class="perf-logo logo-openai" aria-hidden="true"></i></span><span class="perf-name">GPT-5.4</span>
+              </div>
+              <div class="perf-bar is-ours" data-value="41.6" style="--bar-color:var(--teal);--bar-color-2:var(--accent);--delay:.10s" title="S-Agent-8B: 41.6">
+                <span class="perf-value" data-target="41.6">0.0</span><span class="perf-column"><i class="perf-logo logo-sagent" aria-hidden="true"></i></span><span class="perf-name">S-Agent-8B</span>
+              </div>
+              <div class="perf-bar" data-value="31.1" style="--bar-color:#8f7cff;--bar-color-2:#cabdff;--delay:.16s" title="Qwen3-VL-8B-Instruct: 31.1">
+                <span class="perf-value" data-target="31.1">0.0</span><span class="perf-column"><i class="perf-logo logo-qwen" aria-hidden="true"></i></span><span class="perf-name">Qwen</span>
+              </div>
+              <div class="perf-bar" data-value="30.7" style="--bar-color:rgba(141,243,223,.36);--bar-color-2:rgba(204,255,160,.46);--delay:.22s" title="S-Agent (Qwen3-VL-8B): 30.7">
+                <span class="perf-value" data-target="30.7">0.0</span><span class="perf-column"><i class="perf-logo logo-sagent" aria-hidden="true"></i></span><span class="perf-name">S-Agent Qwen</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="perf-chart" data-min="40" data-max="48" aria-label="SFT ViewSpatial-Bench accuracy comparison">
+            <div class="perf-chart-head"><h4>ViewSpatial-Bench</h4><span>Accuracy (%)</span></div>
+            <div class="perf-bars">
+              <div class="perf-scale" aria-hidden="true"><span>47</span><span>45</span><span>43</span><span>41</span></div>
+              <div class="perf-bar is-ours" data-value="46.8" style="--bar-color:var(--teal);--bar-color-2:var(--accent);--delay:.04s" title="S-Agent-8B: 46.8">
+                <span class="perf-value" data-target="46.8">0.0</span><span class="perf-column"><i class="perf-logo logo-sagent" aria-hidden="true"></i></span><span class="perf-name">S-Agent-8B</span>
+              </div>
+              <div class="perf-bar" data-value="45.6" style="--bar-color:rgba(245,247,240,.40);--bar-color-2:rgba(245,247,240,.88);--delay:.10s" title="GPT-5.4: 45.6">
+                <span class="perf-value" data-target="45.6">0.0</span><span class="perf-column"><i class="perf-logo logo-openai" aria-hidden="true"></i></span><span class="perf-name">GPT-5.4</span>
+              </div>
+              <div class="perf-bar" data-value="44.1" style="--bar-color:rgba(141,243,223,.36);--bar-color-2:rgba(204,255,160,.46);--delay:.16s" title="S-Agent (Qwen3-VL-8B): 44.1">
+                <span class="perf-value" data-target="44.1">0.0</span><span class="perf-column"><i class="perf-logo logo-sagent" aria-hidden="true"></i></span><span class="perf-name">S-Agent Qwen</span>
+              </div>
+              <div class="perf-bar" data-value="42.2" style="--bar-color:#8f7cff;--bar-color-2:#cabdff;--delay:.22s" title="Qwen3-VL-8B-Instruct: 42.2">
+                <span class="perf-value" data-target="42.2">0.0</span><span class="perf-column"><i class="perf-logo logo-qwen" aria-hidden="true"></i></span><span class="perf-name">Qwen</span>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div class="perf-result-strip">
+          <span>SFT Results</span>
+          <p>S-Agent-8B +10.5 on MMSI-Bench<br>vs Qwen3-VL-8B.</p>
+        </div>
       </div>
     </div>
   </div>
@@ -334,8 +471,8 @@
 
     <div class="sample-grid">
       <a class="stile" href="trajectories/trajectory.html?clean=1&amp;case=3001">
-        <div class="smeta"><span class="pill vid">Distance</span><span class="sbench">ReVSI</span><span class="smodel">· #3001</span></div>
-        <img class="scover" loading="lazy" src="trajectories/assets/abs_distance/3001/evidence_selector_contact_sheet.jpg" alt="Keyframes selected for case 3001" />
+        <div class="smeta"><span class="pill vid">Distance</span><span class="sbench">ReVSI</span></div>
+        <img class="scover" loading="lazy" src="trajectories/assets/abs_distance/3001/evidence_selector_contact_sheet.jpg" alt="Keyframes selected for a distance trajectory" />
         <div class="slabel">Question</div>
         <div class="sq">Measuring from the closest point of each object, what is the direct distance between the computer mouse and the smoke detector (in meters)?</div>
         <div class="ssum">GT <strong>3.0 m</strong> · S-Agent <strong>3.09 m</strong> <span class="ok">✓</span> — T★ keyframe search → metric-depth 3D lifting → measurement expert.</div>
@@ -343,8 +480,8 @@
       </a>
 
       <a class="stile" href="trajectories/trajectory.html?clean=1&amp;case=2534">
-        <div class="smeta"><span class="pill vid">Distance</span><span class="sbench">ReVSI</span><span class="smodel">· #2534</span></div>
-        <img class="scover" loading="lazy" src="trajectories/assets/abs_distance/2534/evidence_selector_contact_sheet.jpg" alt="Keyframes selected for case 2534" />
+        <div class="smeta"><span class="pill vid">Distance</span><span class="sbench">ReVSI</span></div>
+        <img class="scover" loading="lazy" src="trajectories/assets/abs_distance/2534/evidence_selector_contact_sheet.jpg" alt="Keyframes selected for a distance trajectory" />
         <div class="slabel">Question</div>
         <div class="sq">Measuring from the closest point of each object, what is the direct distance between the laptop and the desktop printer (in meters)?</div>
         <div class="ssum">GT <strong>3.4 m</strong> · S-Agent <strong>3.33 m</strong> <span class="ok">✓</span> — T★ keyframe search → metric-depth 3D lifting → measurement expert.</div>
@@ -352,8 +489,8 @@
       </a>
 
       <a class="stile" href="trajectories/trajectory.html?clean=1&amp;case=467">
-        <div class="smeta"><span class="pill mv">Counting</span><span class="sbench">ReVSI</span><span class="smodel">· #467</span></div>
-        <img class="scover" loading="lazy" src="trajectories/assets/counting_single/467/evidence_selector_contact_sheet.jpg" alt="Keyframes selected for case 467" />
+        <div class="smeta"><span class="pill mv">Counting</span><span class="sbench">ReVSI</span></div>
+        <img class="scover" loading="lazy" src="trajectories/assets/counting_single/467/evidence_selector_contact_sheet.jpg" alt="Keyframes selected for a counting trajectory" />
         <div class="slabel">Question</div>
         <div class="sq">How many monitor(s) are in the scene?</div>
         <div class="ssum">GT <strong>3</strong> · S-Agent <strong>3</strong> <span class="ok">✓</span> — T★ keyframe search → open-vocab detection → counting expert (multi-frame NMS).</div>
@@ -361,8 +498,8 @@
       </a>
 
       <a class="stile" href="trajectories/trajectory.html?clean=1&amp;case=383">
-        <div class="smeta"><span class="pill mv">Counting</span><span class="sbench">ReVSI</span><span class="smodel">· #383</span></div>
-        <img class="scover" loading="lazy" src="trajectories/assets/counting_single/383/evidence_selector_contact_sheet.jpg" alt="Keyframes selected for case 383" />
+        <div class="smeta"><span class="pill mv">Counting</span><span class="sbench">ReVSI</span></div>
+        <img class="scover" loading="lazy" src="trajectories/assets/counting_single/383/evidence_selector_contact_sheet.jpg" alt="Keyframes selected for a counting trajectory" />
         <div class="slabel">Question</div>
         <div class="sq">How many monitor(s) are in the scene?</div>
         <div class="ssum">GT <strong>2</strong> · S-Agent <strong>2</strong> <span class="ok">✓</span> — T★ keyframe search → open-vocab detection → counting expert (multi-frame NMS).</div>
@@ -370,8 +507,8 @@
       </a>
 
       <a class="stile" href="trajectories/revsi_trajectory.html?clean=1&amp;case=6247">
-        <div class="smeta"><span class="pill si">Route</span><span class="sbench">ReVSI</span><span class="smodel">· #6247</span></div>
-        <img class="scover" loading="lazy" src="trajectories/runs/showcase_lossless_primary125_revsi64_gpt54_20260614_185708/cases/6247/evidence_selector_contact_sheet.jpg" alt="Keyframes selected for case 6247" />
+        <div class="smeta"><span class="pill si">Route</span><span class="sbench">ReVSI</span></div>
+        <img class="scover" loading="lazy" src="trajectories/runs/showcase_lossless_primary125_revsi64_gpt54_20260614_185708/cases/6247/evidence_selector_contact_sheet.jpg" alt="Keyframes selected for a route trajectory" />
         <div class="slabel">Question</div>
         <div class="sq">Beginning at the range hood and facing the dishwasher, which turns navigate to the floor lamp?</div>
         <div class="ssum">GT <strong>A</strong> · S-Agent <strong>A</strong> <span class="ok">✓</span> — detection → grounding → Metric3D → spatial reconstruction.</div>
@@ -379,8 +516,8 @@
       </a>
 
       <a class="stile" href="trajectories/revsi_trajectory.html?clean=1&amp;case=6483">
-        <div class="smeta"><span class="pill si">Route</span><span class="sbench">ReVSI</span><span class="smodel">· #6483</span></div>
-        <img class="scover" loading="lazy" src="trajectories/runs/showcase_lossless_primary125_revsi64_gpt54_20260614_185708/cases/6483/evidence_selector_contact_sheet.jpg" alt="Keyframes selected for case 6483" />
+        <div class="smeta"><span class="pill si">Route</span><span class="sbench">ReVSI</span></div>
+        <img class="scover" loading="lazy" src="trajectories/runs/showcase_lossless_primary125_revsi64_gpt54_20260614_185708/cases/6483/evidence_selector_contact_sheet.jpg" alt="Keyframes selected for a route trajectory" />
         <div class="slabel">Question</div>
         <div class="sq">Beginning at the laptop and facing the window, which turns navigate to the closet?</div>
         <div class="ssum">GT <strong>B</strong> · S-Agent <strong>B</strong> <span class="ok">✓</span> — detection → grounding → Metric3D → spatial reconstruction.</div>
@@ -388,8 +525,8 @@
       </a>
 
       <a class="stile" href="trajectories/revsi_trajectory.html?clean=1&amp;case=2200">
-        <div class="smeta"><span class="pill gs">Size</span><span class="sbench">ReVSI</span><span class="smodel">· #2200</span></div>
-        <img class="scover" loading="lazy" src="trajectories/runs/showcase_lossless_primary125_revsi64_gpt54_20260614_185708/cases/2200/evidence_selector_contact_sheet.jpg" alt="Keyframes selected for case 2200" />
+        <div class="smeta"><span class="pill gs">Size</span><span class="sbench">ReVSI</span></div>
+        <img class="scover" loading="lazy" src="trajectories/runs/showcase_lossless_primary125_revsi64_gpt54_20260614_185708/cases/2200/evidence_selector_contact_sheet.jpg" alt="Keyframes selected for a size trajectory" />
         <div class="slabel">Question</div>
         <div class="sq">What is the longest dimension of the wet floor sign, measured in centimeters?</div>
         <div class="ssum">GT <strong>61 cm</strong> · S-Agent <strong>62.6 cm</strong> <span class="ok">✓</span> — detection → grounding → Metric3D → measurement expert.</div>
@@ -397,8 +534,8 @@
       </a>
 
       <a class="stile" href="trajectories/mmsi_trajectory.html?clean=1&amp;case=283">
-        <div class="smeta"><span class="pill gs">Measurement</span><span class="sbench">MMSI</span><span class="smodel">· #283</span></div>
-        <img class="scover" loading="lazy" src="trajectories/runs/showcase_lossless_primary85_mmsi_gpt54_20260614_night_primary125_to_mmsi/decoded_images/283_0.jpg" alt="Input image for case 283" />
+        <div class="smeta"><span class="pill gs">Measurement</span><span class="sbench">MMSI</span></div>
+        <img class="scover" loading="lazy" src="trajectories/runs/showcase_lossless_primary85_mmsi_gpt54_20260614_night_primary125_to_mmsi/decoded_images/283_0.jpg" alt="Input image for a measurement trajectory" />
         <div class="slabel">Question</div>
         <div class="sq">Assuming the width of this cabinet is 10 cm, what is the length of this cabinet?</div>
         <div class="ssum">GT <strong>D</strong> · S-Agent <strong>D</strong> <span class="ok">✓</span> — detection → Metric3D geometry → measurement expert.</div>
@@ -406,8 +543,8 @@
       </a>
 
       <a class="stile" href="trajectories/mmsi_trajectory.html?clean=1&amp;case=387">
-        <div class="smeta"><span class="pill gs">Measurement</span><span class="sbench">MMSI</span><span class="smodel">· #387</span></div>
-        <img class="scover" loading="lazy" src="trajectories/runs/showcase_lossless_primary85_mmsi_gpt54_20260614_night_primary125_to_mmsi/decoded_images/387_0.jpg" alt="Input image for case 387" />
+        <div class="smeta"><span class="pill gs">Measurement</span><span class="sbench">MMSI</span></div>
+        <img class="scover" loading="lazy" src="trajectories/runs/showcase_lossless_primary85_mmsi_gpt54_20260614_night_primary125_to_mmsi/decoded_images/387_0.jpg" alt="Input image for a measurement trajectory" />
         <div class="slabel">Question</div>
         <div class="sq">Compared to the plate under the wooden table, which has a larger radius: the ceramic pot or the plate?</div>
         <div class="ssum">GT <strong>A</strong> · S-Agent <strong>A</strong> <span class="ok">✓</span> — object detection → 3D metric probes → size comparison.</div>
@@ -415,8 +552,8 @@
       </a>
 
       <a class="stile" href="trajectories/mmsi_trajectory.html?clean=1&amp;case=359">
-        <div class="smeta"><span class="pill si">Multi-step</span><span class="sbench">MMSI</span><span class="smodel">· #359</span></div>
-        <img class="scover" loading="lazy" src="trajectories/runs/showcase_lossless_primary85_mmsi_gpt54_20260614_night_primary125_to_mmsi/decoded_images/359_0.jpg" alt="Input image for case 359" />
+        <div class="smeta"><span class="pill si">Multi-step</span><span class="sbench">MMSI</span></div>
+        <img class="scover" loading="lazy" src="trajectories/runs/showcase_lossless_primary85_mmsi_gpt54_20260614_night_primary125_to_mmsi/decoded_images/359_0.jpg" alt="Input image for a multi-step trajectory" />
         <div class="slabel">Question</div>
         <div class="sq">With the direction of going up the stairs facing north, which spatial statement is correct?</div>
         <div class="ssum">GT <strong>D</strong> · S-Agent <strong>D</strong> <span class="ok">✓</span> — detection → grounding → Metric3D → relative-position expert.</div>
@@ -424,8 +561,8 @@
       </a>
 
       <a class="stile" href="trajectories/mmsi_trajectory.html?clean=1&amp;case=861">
-        <div class="smeta"><span class="pill si">Multi-step</span><span class="sbench">MMSI</span><span class="smodel">· #861</span></div>
-        <img class="scover" loading="lazy" src="trajectories/runs/showcase_lossless_primary85_mmsi_gpt54_20260614_night_primary125_to_mmsi/decoded_images/861_0.jpg" alt="Input image for case 861" />
+        <div class="smeta"><span class="pill si">Multi-step</span><span class="sbench">MMSI</span></div>
+        <img class="scover" loading="lazy" src="trajectories/runs/showcase_lossless_primary85_mmsi_gpt54_20260614_night_primary125_to_mmsi/decoded_images/861_0.jpg" alt="Input image for a multi-step trajectory" />
         <div class="slabel">Question</div>
         <div class="sq">Given several room facts, which statement about the scene is incorrect?</div>
         <div class="ssum">GT <strong>B</strong> · S-Agent <strong>B</strong> <span class="ok">✓</span> — count, detection, grounding, metric and relative-position checks.</div>
@@ -433,8 +570,8 @@
       </a>
 
       <a class="stile" href="trajectories/mmsi_trajectory.html?clean=1&amp;case=893">
-        <div class="smeta"><span class="pill si">Multi-step</span><span class="sbench">MMSI</span><span class="smodel">· #893</span></div>
-        <img class="scover" loading="lazy" src="trajectories/runs/showcase_lossless_primary85_mmsi_gpt54_20260614_night_primary125_to_mmsi/decoded_images/893_0.jpg" alt="Input image for case 893" />
+        <div class="smeta"><span class="pill si">Multi-step</span><span class="sbench">MMSI</span></div>
+        <img class="scover" loading="lazy" src="trajectories/runs/showcase_lossless_primary85_mmsi_gpt54_20260614_night_primary125_to_mmsi/decoded_images/893_0.jpg" alt="Input image for a multi-step trajectory" />
         <div class="slabel">Question</div>
         <div class="sq">If the window faces north, where is the cardboard box?</div>
         <div class="ssum">GT <strong>A</strong> · S-Agent <strong>A</strong> <span class="ok">✓</span> — grounding → Metric3D reconstruction → southeast-corner resolution.</div>
@@ -465,32 +602,47 @@
 </section>
 
 <footer>
-  <div class="wrap">
-    <div class="foot-brand">
-      <svg class="title-eye foot-eye anim" viewBox="56 50 210 232" role="img" aria-label="S-Agent logo">
+  <div class="wrap footer-base">
+    <a class="footer-ropedia" href="https://ropedia.com" target="_blank" rel="noopener">
+      <img class="instlogo" src="assets/ropedia_green.svg" alt="Ropedia" />
+    </a>
+    <div class="footer-sagent sagent-wordmark" role="img" aria-label="S-Agent">
+      <svg class="title-eye foot-eye logo-s-cube anim" viewBox="54 42 255 236" aria-hidden="true" focusable="false">
         <defs>
-          <linearGradient id="logoRailF" x1="86" y1="76" x2="244" y2="246" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#CCFFA0"/><stop offset="0.5" stop-color="#6CBF43"/><stop offset="1" stop-color="#4F8F35"/>
+          <linearGradient id="logoSRibbonF" x1="88" y1="58" x2="244" y2="256" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#8DF3DF"/><stop offset="0.42" stop-color="#CCFFA0"/><stop offset="0.68" stop-color="#6CBF43"/><stop offset="1" stop-color="#2F8F5A"/>
           </linearGradient>
-          <radialGradient id="logoBeaconF" cx="50%" cy="50%" r="58%">
-            <stop stop-color="#F4FFF0"/><stop offset="0.46" stop-color="#8DF3DF"/><stop offset="1" stop-color="#6CBF43"/>
+          <linearGradient id="logoSEdgeF" x1="82" y1="66" x2="225" y2="232" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#F4FFF0"/><stop offset="0.44" stop-color="#CCFFA0"/><stop offset="1" stop-color="#8DF3DF"/>
+          </linearGradient>
+          <radialGradient id="logoSGlowF" cx="52%" cy="48%" r="62%">
+            <stop stop-color="#CCFFA0" stop-opacity="0.46"/><stop offset="0.58" stop-color="#65DB85" stop-opacity="0.18"/><stop offset="1" stop-color="#020502" stop-opacity="0"/>
           </radialGradient>
         </defs>
-        <ellipse class="field" cx="166" cy="164" rx="94" ry="114"/>
-        <path class="mesh" d="M101 107L224 78L240 214L90 242L161 157L101 107M161 157L224 78M161 157L240 214"/>
-        <path class="axis" d="M91 176H247M166 72V258"/>
-        <path class="rail" d="M224 78C169 46 91 63 85 113C78 173 239 151 241 214C243 266 157 274 90 242" stroke="url(#logoRailF)"/>
-        <path class="shine" d="M224 78C169 46 91 63 85 113C78 173 239 151 241 214C243 266 157 274 90 242"/>
-        <g class="beacon" transform="translate(161 157)">
-          <circle class="beacon-ring" r="24"/>
-          <circle class="beacon-core" r="8" fill="url(#logoBeaconF)"/>
+        <ellipse class="s-halo" cx="166" cy="164" rx="108" ry="118" fill="url(#logoSGlowF)"/>
+        <path class="s-depth" d="M224 78C169 46 91 63 85 113C78 173 239 151 241 214C243 266 157 274 90 242"/>
+        <path class="s-ribbon" d="M224 78C169 46 91 63 85 113C78 173 239 151 241 214C243 266 157 274 90 242" stroke="url(#logoSRibbonF)"/>
+        <path class="s-edge s-edge-top" d="M224 78C169 46 91 63 85 113C78 173 239 151 241 214C243 266 157 274 90 242" stroke="url(#logoSEdgeF)"/>
+        <path class="s-edge s-edge-bottom" d="M224 78C169 46 91 63 85 113C78 173 239 151 241 214C243 266 157 274 90 242" stroke="url(#logoSEdgeF)"/>
+        <path class="s-shine" d="M224 78C169 46 91 63 85 113C78 173 239 151 241 214C243 266 157 274 90 242"/>
+        <path class="s-cut" d="M183 165L217 149L197 179Z"/>
+        <g class="logo-cubes" aria-hidden="true">
+          <g transform="translate(226 58) scale(.78)"><g class="cube c1"><path class="cube-top" d="M2 0L11 -5L21 -2L12 3Z"/><path class="cube-side" d="M12 3L21 -2L21 10L12 16Z"/><path class="cube-front" d="M2 0L12 3L12 16L2 12Z"/></g></g>
+          <g transform="translate(248 48) scale(.56)"><g class="cube c2"><path class="cube-top" d="M2 0L11 -5L21 -2L12 3Z"/><path class="cube-side" d="M12 3L21 -2L21 10L12 16Z"/><path class="cube-front" d="M2 0L12 3L12 16L2 12Z"/></g></g>
+          <g transform="translate(270 62) scale(.68)"><g class="cube c3"><path class="cube-top" d="M2 0L11 -5L21 -2L12 3Z"/><path class="cube-side" d="M12 3L21 -2L21 10L12 16Z"/><path class="cube-front" d="M2 0L12 3L12 16L2 12Z"/></g></g>
+          <g transform="translate(241 78) scale(.48)"><g class="cube c4"><path class="cube-top" d="M2 0L11 -5L21 -2L12 3Z"/><path class="cube-side" d="M12 3L21 -2L21 10L12 16Z"/><path class="cube-front" d="M2 0L12 3L12 16L2 12Z"/></g></g>
+          <g transform="translate(286 82) scale(.48)"><g class="cube c5"><path class="cube-top" d="M2 0L11 -5L21 -2L12 3Z"/><path class="cube-side" d="M12 3L21 -2L21 10L12 16Z"/><path class="cube-front" d="M2 0L12 3L12 16L2 12Z"/></g></g>
+          <g transform="translate(260 96) scale(.42)"><g class="cube c6"><path class="cube-top" d="M2 0L11 -5L21 -2L12 3Z"/><path class="cube-side" d="M12 3L21 -2L21 10L12 16Z"/><path class="cube-front" d="M2 0L12 3L12 16L2 12Z"/></g></g>
+          <g transform="translate(292 50) scale(.42)"><g class="cube c7"><path class="cube-top" d="M2 0L11 -5L21 -2L12 3Z"/><path class="cube-side" d="M12 3L21 -2L21 10L12 16Z"/><path class="cube-front" d="M2 0L12 3L12 16L2 12Z"/></g></g>
+          <g transform="translate(231 98) scale(.34)"><g class="cube c8"><path class="cube-top" d="M2 0L11 -5L21 -2L12 3Z"/><path class="cube-side" d="M12 3L21 -2L21 10L12 16Z"/><path class="cube-front" d="M2 0L12 3L12 16L2 12Z"/></g></g>
+          <g transform="translate(256 72) scale(.38)"><g class="cube c9"><path class="cube-top" d="M2 0L11 -5L21 -2L12 3Z"/><path class="cube-side" d="M12 3L21 -2L21 10L12 16Z"/><path class="cube-front" d="M2 0L12 3L12 16L2 12Z"/></g></g>
+          <g transform="translate(279 43) scale(.34)"><g class="cube c10"><path class="cube-top" d="M2 0L11 -5L21 -2L12 3Z"/><path class="cube-side" d="M12 3L21 -2L21 10L12 16Z"/><path class="cube-front" d="M2 0L12 3L12 16L2 12Z"/></g></g>
+          <g transform="translate(302 72) scale(.34)"><g class="cube c11"><path class="cube-top" d="M2 0L11 -5L21 -2L12 3Z"/><path class="cube-side" d="M12 3L21 -2L21 10L12 16Z"/><path class="cube-front" d="M2 0L12 3L12 16L2 12Z"/></g></g>
+          <g transform="translate(249 112) scale(.3)"><g class="cube c12"><path class="cube-top" d="M2 0L11 -5L21 -2L12 3Z"/><path class="cube-side" d="M12 3L21 -2L21 10L12 16Z"/><path class="cube-front" d="M2 0L12 3L12 16L2 12Z"/></g></g>
         </g>
-        <circle class="dot" cx="224" cy="78" r="12"/><circle class="dot" cx="101" cy="107" r="12"/><circle class="dot" cx="161" cy="157" r="12"/><circle class="dot" cx="240" cy="214" r="12"/><circle class="dot" cx="90" cy="242" r="12"/>
       </svg>
-      <a class="foot-rope" href="https://ropedia.com" target="_blank" rel="noopener"><img class="instlogo" src="assets/ropedia_green.svg" alt="Ropedia" /></a>
-      <span><b>S-Agent</b> · Technical Report 2026 · see the <a href="assets/S-Agent-paper.pdf" target="_blank">PDF</a> for full details.</span>
+      <span class="tail">-Agent</span>
     </div>
-    <span>NTU · THU · ByteDance · NWPU · Ropedia</span>
   </div>
 </footer>
 

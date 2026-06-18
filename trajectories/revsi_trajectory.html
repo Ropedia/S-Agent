@@ -352,11 +352,11 @@ function stage(cls, no, kicker, title, chips, reason, visual, raw, copyExtra = "
 
 function renderHeader(c){
   const good = isGood(c);
-  document.title = `S-Agent Trajectory · ReVSI #${c.case_id}`;
+  document.title = "S-Agent Trajectory · ReVSI";
   $("head").innerHTML = `
     <div class="head-main">
       <div class="brand">S-Agent trajectory</div>
-      <h1>ReVSI Case #${esc(c.case_id)}</h1>
+      <h1>ReVSI Reasoning Trajectory</h1>
       <p class="head-sub">${esc(short(c.question, 180))}</p>
       <div class="verdict ${good ? "" : "bad"}">S-Agent <b>${esc(c.prediction)}</b><span>·</span> GT <b>${esc(c.ground_truth)}</b><span>·</span><em>${good ? "correct" : "check"}</em></div>
     </div>
