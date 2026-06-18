@@ -10,7 +10,7 @@
 
 ---
 
-<img src="assets/overview.png" alt="S-Agent overview" width="800">
+<video src="sagent_demo_video.mp4" controls width="800"></video>
 
 </div>
 
