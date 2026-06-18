@@ -10,7 +10,7 @@
 
 ---
 
-<a href="https://youtu.be/f89D0ZCJWKo"><img src="https://img.youtube.com/vi/f89D0ZCJWKo/maxresdefault.jpg" alt="Watch the S-Agent demo video" width="800"></a>
+<a href="https://youtu.be/f89D0ZCJWKo"><img src="assets/sagent_demo_youtube_preview.jpg" alt="Watch the S-Agent demo video on YouTube" width="800"></a>
 
 </div>
 
