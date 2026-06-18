@@ -10,7 +10,7 @@
 
 ---
 
-<video src="assets/sagent_demo_video_compressed.mp4" controls width="800"></video>
+<a href="https://youtu.be/f89D0ZCJWKo"><img src="https://img.youtube.com/vi/f89D0ZCJWKo/maxresdefault.jpg" alt="Watch the S-Agent demo video" width="800"></a>
 
 </div>
 
