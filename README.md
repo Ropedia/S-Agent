@@ -10,7 +10,7 @@
 
 ---
 
-<video src="sagent_demo_video.mp4" controls width="800"></video>
+<video src="assets/sagent_demo_video.mp4" controls width="800"></video>
 
 </div>
 
