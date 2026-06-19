@@ -628,6 +628,11 @@ details.finding[open] .finding-body{animation:findingReveal .42s cubic-bezier(.2
   box-shadow:0 36px 72px -28px rgba(0,0,0,.88),0 0 0 1px var(--accent-wash),0 0 34px rgba(204,255,160,.09);
 }
 .hcard .hc-img{display:block;flex:0 0 auto;width:100%;height:120px;object-fit:cover;object-position:center;background:var(--bg-2);border-bottom:1px solid var(--line);pointer-events:none;}
+.hc-mini-grid{
+  flex:0 0 auto;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;height:120px;
+  border-bottom:1px solid var(--line);background:var(--line);overflow:hidden;pointer-events:none;
+}
+.hc-mini-grid img{display:block;width:100%;height:100%;min-width:0;object-fit:cover;object-position:center;background:var(--bg-2);}
 .hc-body{display:flex;flex:1;flex-direction:column;padding:.85rem .95rem 1rem;}
 .hc-tag{font-family:var(--font-mono);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink);font-weight:700;}
 .hc-q{margin:.42rem 0 .38rem;font-size:.98rem;font-weight:600;line-height:1.35;color:var(--ink);}
@@ -636,7 +641,7 @@ details.finding[open] .finding-body{animation:findingReveal .42s cubic-bezier(.2
 @media(min-width:920px){
   .hcar{--hcw:310px;--arrow-w:40px;padding:1.08rem 1rem 1.18rem;}
   .hcard{min-height:320px;}
-  .hcard .hc-img,.hc-diagram,.hcard--final .hc-final{height:136px;}
+  .hcard .hc-img,.hc-diagram,.hc-mini-grid,.hcard--final .hc-final{height:136px;}
   .hc-body{padding:.95rem 1.05rem 1.08rem;}
   .hc-q{font-size:1.05rem;}
   .hc-a{font-size:.91rem;}

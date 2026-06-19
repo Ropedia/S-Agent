@@ -95,41 +95,31 @@
           <div class="hcar-cap"><span class="hcar-cap-icon"><i class="fas fa-route" aria-hidden="true"></i></span><span>Agent Trajectory Sample</span></div>
           <div class="hcar-viewport">
             <div class="hcar-track">
-              <div class="hcard" data-thumb="assets/case6111/contact.jpg" data-step-label="Step 00 · Question">
-                <img class="hc-img" loading="lazy" src="assets/case6111/contact.jpg" alt="64 sampled keyframes" />
-                <div class="hc-body"><span class="hc-tag">Step 00 · Question</span><div class="hc-q">Standing by the headphones, facing away from the entrance door — which way is the camera?</div><div class="hc-a">Input: 64 video frames → question + contact sheet</div></div>
+              <div class="hcard" data-thumb="assets/case6111/demo/inputGrid.jpg" data-step-label="Step 00 · Question">
+                <img class="hc-img" loading="lazy" src="assets/case6111/demo/inputGrid.jpg" alt="64 sampled video frames" />
+                <div class="hc-body"><span class="hc-tag">Step 00 · Question</span><div class="hc-q">Standing by the headphones, facing away from the entrance door — where is the camera?</div><div class="hc-a">Choices: front-left, front-right, back-left, back-right.</div></div>
               </div>
               <div class="hcar-arrow" aria-hidden="true"><i class="fas fa-long-arrow-alt-right"></i></div>
-              <div class="hcard" data-thumb="assets/case6111/headphones.jpg" data-step-label="Step 01 · Grounding">
-                <img class="hc-img" loading="lazy" src="assets/case6111/headphones.jpg" alt="Headphones grounded with a bounding box" />
-                <div class="hc-body"><span class="hc-tag">Step 01 · Grounding</span><div class="hc-q">Lock the three spatial entities with object grounding.</div><div class="hc-a">headphones + door + camera · <b>3 / 3</b> located <span class="ok">✓</span></div></div>
+              <div class="hcard" data-thumb="assets/case6111/demo/headphones.jpg" data-step-label="Step 01 · 2D Evidence">
+                <div class="hc-mini-grid" aria-label="2D visual evidence">
+                  <img loading="lazy" src="assets/case6111/demo/headphones.jpg" alt="Headphones grounding" />
+                  <img loading="lazy" src="assets/case6111/demo/door.jpg" alt="Entrance door grounding" />
+                  <img loading="lazy" src="assets/case6111/demo/camera.jpg" alt="Camera grounding" />
+                </div>
+                <div class="hc-body"><span class="hc-tag">Step 01 · 2D Evidence</span><div class="hc-q">Ground the entities before reasoning.</div><div class="hc-a">headphones + door + camera · <b>3 / 3</b> located <span class="ok">✓</span></div></div>
               </div>
               <div class="hcar-arrow" aria-hidden="true"><i class="fas fa-long-arrow-alt-right"></i></div>
-              <div class="hcard" data-thumb="assets/case6111/cloudPoster.png" data-step-label="Step 02 · Metric3D">
-                <img class="hc-img" loading="lazy" src="assets/case6111/cloudPoster.png" alt="Dense PLY point cloud with anchors and camera poses" />
-                <div class="hc-body"><span class="hc-tag">Step 02 · Metric3D</span><div class="hc-q">Lift the grounded entities into a dense 3D reconstruction.</div><div class="hc-a"><b>3 anchors</b> · headphones, door, camera centers</div></div>
+              <div class="hcard" data-thumb="assets/case6111/demo/cloudAnim.webp" data-step-label="Step 02 · 3D Lift">
+                <img class="hc-img" loading="lazy" src="assets/case6111/demo/cloudAnim.webp" alt="Dense point cloud with object anchors" />
+                <div class="hc-body"><span class="hc-tag">Step 02 · 3D Lift</span><div class="hc-q">Lift grounded objects into the scene frame.</div><div class="hc-a"><b>3 anchors</b> · headphones, door, camera centers</div></div>
               </div>
               <div class="hcar-arrow" aria-hidden="true"><i class="fas fa-long-arrow-alt-right"></i></div>
-              <div class="hcard" data-thumb="assets/case6111/top.png" data-step-label="Step 03 · Egocentric frame" data-rail-diagram="ego">
-                <div class="hc-diagram"><svg viewBox="0 0 320 150" role="img" aria-label="Egocentric person frame">
-                  <line class="fd-axis" x1="44" y1="86" x2="276" y2="86"/>
-                  <line class="fd-axis" x1="160" y1="34" x2="160" y2="136"/>
-                  <line class="fd-front" x1="160" y1="86" x2="160" y2="48"/>
-                  <path class="fd-fronthead" d="M160 38 L152 54 L168 54 Z"/>
-                  <circle class="fd-ring" cx="160" cy="86" r="25"/>
-                  <path class="fd-turn" d="M138 70 L132 80 L144 82 Z"/>
-                  <circle class="fd-door" cx="160" cy="122" r="6"/>
-                  <circle class="fd-person" cx="160" cy="86" r="7"/>
-                  <text class="fd-t cy" x="160" y="30" text-anchor="middle">FACING</text>
-                  <text class="fd-t cy" x="160" y="72" text-anchor="middle">PERSON</text>
-                  <text class="fd-t gd" x="160" y="146" text-anchor="middle">DOOR · BACK</text>
-                  <text class="fd-t" x="22" y="90">LEFT</text>
-                  <text class="fd-t" x="298" y="90" text-anchor="end">RIGHT</text>
-                </svg></div>
-                <div class="hc-body"><span class="hc-tag">Step 03 · Egocentric frame</span><div class="hc-q">Rotate the top-down layout into the person's coordinate frame.</div><div class="hc-a">Stand at headphones, face away from the door</div></div>
+              <div class="hcard" data-thumb="assets/case6111/demo/step3Intro.webp" data-step-label="Step 03 · Orientation">
+                <img class="hc-img" loading="lazy" src="assets/case6111/demo/step3Intro.webp" alt="Point cloud aligned to top-down scene view" />
+                <div class="hc-body"><span class="hc-tag">Step 03 · Orientation</span><div class="hc-q">Build the egocentric frame.</div><div class="hc-a">Stand at headphones, face away from the door</div></div>
               </div>
               <div class="hcar-arrow" aria-hidden="true"><i class="fas fa-long-arrow-alt-right"></i></div>
-              <div class="hcard" data-thumb="assets/case6111/front.png" data-step-label="Step 04 · Relative position" data-rail-diagram="relative">
+              <div class="hcard" data-thumb="assets/case6111/demo/front.png" data-step-label="Step 04 · Direction" data-rail-diagram="relative">
                 <div class="hc-diagram"><svg viewBox="0 0 320 150" role="img" aria-label="Relative position back-right">
                   <path class="fd-zone" d="M160 86 H290 V138 H160 Z"/>
                   <line class="fd-axis" x1="44" y1="86" x2="276" y2="86"/>
@@ -146,12 +136,12 @@
                   <text class="fd-t" x="22" y="90">LEFT</text>
                   <text class="fd-t rs" x="298" y="134" text-anchor="end">BACK-RIGHT</text>
                 </svg></div>
-                <div class="hc-body"><span class="hc-tag">Step 04 · Relative position</span><div class="hc-q">The relative-position expert judges the camera's quadrant.</div><div class="hc-a">Camera falls at the person's <b>back-right</b></div></div>
+                <div class="hc-body"><span class="hc-tag">Step 04 · Direction</span><div class="hc-q">Resolve the camera quadrant.</div><div class="hc-a">Camera falls at the person's <b>back-right</b></div></div>
               </div>
               <div class="hcar-arrow" aria-hidden="true"><i class="fas fa-long-arrow-alt-right"></i></div>
-              <div class="hcard hcard--final" data-thumb="assets/case6111/still.jpg" data-step-label="Step 05 · Final answer">
+              <div class="hcard hcard--final" data-thumb="assets/case6111/demo/still.jpg" data-step-label="Final · Answer">
                 <div class="hc-final"><span class="hc-final-d">D</span><span class="hc-final-dir">back-right</span></div>
-                <div class="hc-body"><span class="hc-tag">Step 05 · Final answer</span><div class="hc-q">Camera is at the person's back-right.</div><div class="hc-a"><span class="ok">✓</span> correct · GT <b>D</b> · 3 turns · 6 tool calls</div></div>
+                <div class="hc-body"><span class="hc-tag">Final · Answer</span><div class="hc-q">Camera is at the person's back-right.</div><div class="hc-a"><span class="ok">✓</span> correct · GT <b>D</b> · 3 turns · 6 tool calls</div></div>
               </div>
             </div>
           </div>
