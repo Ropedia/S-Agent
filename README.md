@@ -2,7 +2,7 @@
 
 # S-Agent: Spatial Tool-Use Elicits Reasoning for Spatial Intelligence
 
-<a href="https://github.com/Ropedia/S-Agent/tree/page"><img src="https://img.shields.io/badge/Project_Page-page_branch-green" alt="Project Page"></a>
+<a href="https://Ropedia.github.io/S-Agent"><img src="https://img.shields.io/badge/Project_Page-page-green" alt="Project Page"></a>
 <a href="https://arxiv.org/abs/2606.20515"><img src="https://img.shields.io/badge/Paper-arXiv-red" alt="Paper"></a>
 <a href="https://arxiv.org/abs/2606.20515"><img src="https://img.shields.io/badge/arXiv-2606.20515-b31b1b" alt="arXiv"></a>
 <img src="https://img.shields.io/badge/Code-coming_soon-lightgrey" alt="Code">
