@@ -14,6 +14,12 @@
 
 </div>
 
+
+
+https://github.com/user-attachments/assets/a1df75bc-0126-4e0d-8d62-1b83268156be
+
+
+
 ## News
 
 - **2026/06**: Paper and arXiv page released.
