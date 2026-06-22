@@ -4,12 +4,6 @@
 
 **Official repository for the paper**
 
-Yalun Dai*, Hao Li*, Shulin Tian, Runmao Yao, Yuhao Dong, Fangzhou Hong,
-Zhaoxi Chen, Fangfu Liu, Baoliang Tian, Dingwen Zhang, Tao Wang,
-Kim-Hui Yap, Ziwei Liu
-
-Nanyang Technological University | Tsinghua University | ByteDance | NWPU | Ropedia
-
 <a href="https://Ropedia.github.io/S-Agent"><img src="https://img.shields.io/badge/Project_Page-online-green" alt="Project Page"></a>
 <a href="https://huggingface.co/papers/2606.20515"><img src="https://img.shields.io/badge/Paper-Hugging%20Face-ffcc4d" alt="Hugging Face Paper"></a>
 <a href="https://arxiv.org/abs/2606.20515"><img src="https://img.shields.io/badge/arXiv-2606.20515-b31b1b" alt="arXiv"></a>
@@ -19,8 +13,6 @@ Nanyang Technological University | Tsinghua University | ByteDance | NWPU | Rope
 <img src="https://img.shields.io/badge/Models-coming_soon-blue" alt="Models">
 
 </div>
-
-https://github.com/Ropedia/S-Agent/raw/main/assets/sagent_demo_video_compressed.mp4
 
 ## News
 
