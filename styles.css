@@ -151,6 +151,7 @@ code:not(pre code){font-family:var(--font-mono);font-size:.85em;background:var(-
 .authors a{color:var(--ink);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s;}
 .authors a:hover{border-color:var(--accent);}
 .authors sup{color:var(--accent-ink);font-weight:700;}
+.author-nowrap{white-space:nowrap;}
 .affil-note{font-size:.86rem;color:var(--muted);margin:.2rem 0 0;max-width:62ch;}
 .affil-note sup{color:var(--accent-ink);font-weight:700;}
 
