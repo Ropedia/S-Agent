@@ -103,7 +103,7 @@ If you find S-Agent helpful, please consider citing:
   title   = {S-Agent: Spatial Tool-Use Elicits Reasoning for Spatial Intelligence},
   author  = {Dai, Yalun and Li, Hao and Tian, Shulin and Yao, Runmao and
              Dong, Yuhao and Hong, Fangzhou and Chen, Zhaoxi and Liu, Fangfu and
-             Tian, Baoliang and Wang, Tao and Yap, Kim-Hui and
+             Wang, Tao and Yap, Kim-Hui and
              Liu, Ziwei},
   journal = {Technical Report},
   year    = {2026}
